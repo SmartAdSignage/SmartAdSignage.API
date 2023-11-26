@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SmartAdSignage.Core.Mappings;
 using System.Text;
 
 namespace SmartAdSignage.API.Extensions
@@ -52,7 +55,7 @@ namespace SmartAdSignage.API.Extensions
             });
         }
 
-        public static void ConfigureAuthentication(this IServiceCollection services)
+        /*public static void ConfigureAuthentication(this IServiceCollection services)
         {
             services.AddAuthentication(opt =>
             {
@@ -72,6 +75,40 @@ namespace SmartAdSignage.API.Extensions
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"))
                 };
             });
+        }*/
+
+        public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
+        {
+            var jwtConfig = configuration.GetSection("jwtConfig");
+            var secretKey = jwtConfig["secret"];
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtConfig["validIssuer"],
+                    ValidAudience = jwtConfig["validAudience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                };
+            });
+        }
+
+        public static void ConfigureMapping(this IServiceCollection services)
+        {
+            services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
+            var mapperConfig = new MapperConfiguration(map =>
+            {
+                map.AddProfile<UserMappingProfile>();
+            });
+            services.AddSingleton(mapperConfig.CreateMapper());
         }
     }
 }

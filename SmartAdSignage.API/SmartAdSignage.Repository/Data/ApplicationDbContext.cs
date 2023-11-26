@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace SmartAdSignage.Repository.Data
 {
-    public class RepositoryContext: IdentityDbContext<User>
+    public class ApplicationDbContext: IdentityDbContext<User>
     {
-        public RepositoryContext(DbContextOptions options) : base(options)
+        public ApplicationDbContext(DbContextOptions options) : base(options)
         {
         }
 

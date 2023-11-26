@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartAdSignage.API", "SmartAdSignage.API\SmartAdSignage.API.csproj", "{9D3B2729-06A3-43AD-B695-125B730E23F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartAdSignage.API", "SmartAdSignage.API\SmartAdSignage.API.csproj", "{9D3B2729-06A3-43AD-B695-125B730E23F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartAdSignage.Core", "SmartAdSignage.Core\SmartAdSignage.Core.csproj", "{4A6CD187-7509-4A74-A784-2EADEDEE2D33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartAdSignage.Core", "SmartAdSignage.Core\SmartAdSignage.Core.csproj", "{4A6CD187-7509-4A74-A784-2EADEDEE2D33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartAdSignage.Repository", "SmartAdSignage.Repository\SmartAdSignage.Repository.csproj", "{0AF7E4E2-D310-469A-85FF-6A8B8B399E73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartAdSignage.Repository", "SmartAdSignage.Repository\SmartAdSignage.Repository.csproj", "{0AF7E4E2-D310-469A-85FF-6A8B8B399E73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartAdSignage.Services", "SmartAdSignage.Services\SmartAdSignage.Services.csproj", "{FAEFE29C-1EAC-455E-A8C4-BEE796CEDF31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartAdSignage.Services", "SmartAdSignage.Services\SmartAdSignage.Services.csproj", "{FAEFE29C-1EAC-455E-A8C4-BEE796CEDF31}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

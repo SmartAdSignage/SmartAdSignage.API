@@ -11,9 +11,9 @@ using SmartAdSignage.Repository.Data;
 
 namespace SmartAdSignage.Repository.Migrations
 {
-    [DbContext(typeof(RepositoryContext))]
-    [Migration("20231124132105_InitialMigration")]
-    partial class InitialMigration
+    [DbContext(typeof(ApplicationDbContext))]
+    [Migration("20231126201057_Initial_Migration")]
+    partial class Initial_Migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

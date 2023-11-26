@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,8 @@ using SmartAdSignage.Repository;
 using SmartAdSignage.Repository.Data;
 using SmartAdSignage.Repository.Repositories.Implementations;
 using SmartAdSignage.Repository.Repositories.Interfaces;
+using SmartAdSignage.Services.Services.Implementations;
+using SmartAdSignage.Services.Services.Interfaces;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,15 +22,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSingleton<ISeeder, Seeder>();
 builder.Services.AddIdentity<User, IdentityRole>()
-    .AddEntityFrameworkStores<RepositoryContext>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
-builder.Services.AddScoped<IRepository, Repository>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<IUsersService, UsersService>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<RepositoryContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.ConfigureSwagger();
-builder.Services.ConfigureAuthentication();
+builder.Services.ConfigureJWT(builder.Configuration);
+builder.Services.ConfigureMapping();
 builder.Services.ConfigureCors();
 
 var app = builder.Build();

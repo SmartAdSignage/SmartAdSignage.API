@@ -23,7 +23,7 @@ namespace SmartAdSignage.Repository
         {
             using var scope = serviceProvider.CreateScope();
 
-            var aspNetCoreIdentityDbContext = scope.ServiceProvider.GetRequiredService<RepositoryContext>();
+            var aspNetCoreIdentityDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             await aspNetCoreIdentityDbContext.Database.MigrateAsync();
             await SeedAsync(serviceProvider);
         }
