@@ -4,6 +4,7 @@ using SmartAdSignage.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,10 @@ namespace SmartAdSignage.Services.Services.Interfaces
 
         Task<IdentityResult> RegisterUserAsync(RegisterRequest registerRequest);
 
-        Task<string> CreateTokenAsync();
+        Task<IdentityResult> RevokeToken(string username);
+
+        Task<string[]?> GenerateTokensAsync();
+
+        Task<string[]?> RefreshTokensAsync(RefreshRequest refreshRequest);
     }
 }

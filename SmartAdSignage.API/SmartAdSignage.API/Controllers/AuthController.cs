@@ -11,60 +11,25 @@ using Microsoft.AspNetCore.Identity;
 using SmartAdSignage.Core.Models;
 using AutoMapper;
 using SmartAdSignage.Services.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SmartAdSignage.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController(SignInManager<User> signInManager, IMapper mapper, IUsersService usersService) : ControllerBase
     {
-        private readonly IUsersRepository repository;
-        private readonly SignInManager<User> signInManager;
-        private readonly UserManager<User> userManager;
-        private readonly IMapper _mapper;
-        private readonly IUsersService _usersService;
-        public AuthController(IUsersRepository repository, SignInManager<User> signInManager, IMapper mapper, IUsersService usersService)
-        {
-            this.repository = repository;
-            this.signInManager = signInManager;
-            this._mapper = mapper;
-            this._usersService = usersService;
-        }
+        private readonly SignInManager<User> signInManager = signInManager;
+        private readonly IMapper _mapper = mapper;
+        private readonly IUsersService _usersService = usersService;
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromQuery] LoginRequest loginRequest)
+        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
-            return !await _usersService.ValidateUserAsync(loginRequest)
-            ? Unauthorized()
-            : Ok(new AuthenticatedResponse { Token = await _usersService.CreateTokenAsync() });
-            /*if (loginRequest is null)
-            {
-                return BadRequest("Invalid client request");
-            }
-
-            if (await _usersService.ValidateUser(loginRequest) == false)
-            {
+            if (!await _usersService.ValidateUserAsync(loginRequest))
                 return Unauthorized();
-            }
-            var result = await signInManager.CheckPasswordSignInAsync(user, loginRequest.Password, true);
-            if (result.Succeeded)
-            {
-                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
-                var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-                var tokeOptions = new JwtSecurityToken(
-                    issuer: "https://localhost:5001",
-                    audience: "https://localhost:5001",
-                    claims: new List<Claim>(),
-                    expires: DateTime.Now.AddMinutes(5),
-                    signingCredentials: signinCredentials
-                );
-
-                var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-
-                return Ok(new AuthenticatedResponse { Token = tokenString });
-            }
-
-            return Unauthorized();*/
+            string[]? tokens = await _usersService.GenerateTokensAsync();
+            return Ok(new AuthenticatedResponse { TokenType = "Bearer", Token = tokens[0], Expiration = DateTime.Now.AddMinutes(1), RefreshToken = tokens[1]});
         }
 
         [HttpPost("register")]
@@ -72,6 +37,35 @@ namespace SmartAdSignage.API.Controllers
         {
             var userResult = await _usersService.RegisterUserAsync(registerRequest);
             return !userResult.Succeeded ? new BadRequestObjectResult(userResult) : StatusCode(201);
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshRequest refreshRequest)
+        {
+            if (refreshRequest is null)
+                return BadRequest("Invalid client request");
+            var newTokens = await _usersService.RefreshTokensAsync(refreshRequest);
+            if (newTokens is null)
+                return Unauthorized();
+            return Ok(new AuthenticatedResponse { TokenType = "Bearer", Token = newTokens[0], Expiration = DateTime.Now.AddMinutes(1), RefreshToken = newTokens[1] });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("revoke")]
+        public async Task<IActionResult> Revoke([FromBody] RevokeRequest revokeRequest)
+        {
+            if (revokeRequest is null)
+                return BadRequest("Invalid client request");
+
+            var result = await _usersService.RevokeToken(revokeRequest.UserName);
+            if (result is null)
+                return BadRequest("Invalid user name");
+
+            if (result.Succeeded)
+                return NoContent();
+
+            return BadRequest(result);
         }
     }
 }

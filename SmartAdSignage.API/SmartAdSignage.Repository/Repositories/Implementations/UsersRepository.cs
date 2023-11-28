@@ -30,5 +30,13 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
         {
             return await _userManager.FindByNameAsync(username);
         }
+
+        public async Task<bool> SaveRefreshToken(string username, string refreshToken)
+        {
+            var user = await Context.Users.SingleOrDefaultAsync(u => u.UserName == username);
+            user.RefreshToken = refreshToken;
+            /*user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);*/
+            return 0 < await Context.SaveChangesAsync();
+        }
     }
 }

@@ -4,17 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartAdSignage.Core.DTOs.Responses
+namespace SmartAdSignage.Core.DTOs.Requests
 {
-    public class AuthenticatedResponse
+    public class RefreshRequest
     {
-        public string TokenType { get; set; }
-
         public string Token { get; set; }
-
-        public DateTime Expiration { get; set; }
-
         public string RefreshToken { get; set; }
-
     }
 }

@@ -12,5 +12,7 @@ namespace SmartAdSignage.Repository.Repositories.Interfaces
         Task<IEnumerable<User>> GetAllAsync();
 
         Task<User?> GetByUsernameAsync(string username);
+
+        Task<bool> SaveRefreshToken(string username, string refreshToken);
     }
 }

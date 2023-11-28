@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SmartAdSignage.Core.DTOs.Requests;
+using SmartAdSignage.Core.DTOs.Responses;
 using SmartAdSignage.Core.Models;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace SmartAdSignage.Services.Services.Implementations
@@ -42,7 +44,18 @@ namespace SmartAdSignage.Services.Services.Implementations
             return result;
         }
 
-        public async Task<string> CreateTokenAsync()
+        public async Task<string[]?> GenerateTokensAsync()
+        {
+            var token = await GenerateAccessTokenAsync();
+            var refreshToken = GenerateRefreshTokenAsync();
+            _user.RefreshToken = refreshToken;
+            _user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+            await _userManager.UpdateAsync(_user);
+            /*await _usersRepository.SaveRefreshToken(_user.UserName, refreshToken);*/
+            return new string[] { token, refreshToken };
+        }
+
+        private async Task<string> GenerateAccessTokenAsync()
         {
             var signingCredentials = GetSigningCredentials();
             var claims = await GetClaims();
@@ -84,6 +97,65 @@ namespace SmartAdSignage.Services.Services.Implementations
                 signingCredentials: signingCredentials
             );
             return tokenOptions;
+        }
+
+        private string GenerateRefreshTokenAsync()
+        {
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                string token = Convert.ToBase64String(randomNumber);
+                return token;
+            }
+        }
+
+        private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false, //you might want to validate the audience and issuer depending on your use case
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JwtConfig")["secret"])),
+                ValidateLifetime = false //here we are saying that we don't care about the token's expiration date
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken securityToken;
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                throw new SecurityTokenException("Invalid token");
+            return principal;
+        }
+
+        public async Task<string[]?> RefreshTokensAsync(RefreshRequest refreshRequest)
+        {
+            string accessToken = refreshRequest.Token;
+            string refreshToken = refreshRequest.RefreshToken;
+            var principal = GetPrincipalFromExpiredToken(accessToken);
+            var username = principal.Identity.Name;
+            _user = await _userManager.FindByEmailAsync(username);//this is mapped to the Name claim by default
+            //var user = _userContext.LoginModels.SingleOrDefault(u => u.UserName == username);
+            if (_user is null || _user.RefreshToken != refreshToken || _user.RefreshTokenExpiryTime <= DateTime.Now)
+                return null;
+            var newToken = await GenerateAccessTokenAsync();
+            var newRefreshToken = GenerateRefreshTokenAsync();
+            _user.RefreshToken = newRefreshToken;
+            await _userManager.UpdateAsync(_user);
+            return new string[] { newToken, newRefreshToken };
+        }
+
+        public async Task<IdentityResult> RevokeToken(string username)
+        {
+            _user = await _userManager.FindByNameAsync(username);
+            if (_user == null)
+                return null;
+
+            _user.RefreshToken = null;
+            _user.RefreshTokenExpiryTime = DateTime.MinValue;
+            var res = await _userManager.UpdateAsync(_user);
+            return res;
         }
     }
 }
