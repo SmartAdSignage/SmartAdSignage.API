@@ -27,6 +27,7 @@ builder.Services.AddIdentity<User, IdentityRole>()
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddScoped<ILoggerService, LoggerService>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
@@ -50,6 +51,7 @@ app.UseRouting();
 app.UseHttpsRedirection();
 
 app.UseCors("EnableCORS");
+app.ConfigureExceptionHandler(app.Services.CreateScope().ServiceProvider.GetRequiredService<ILoggerService>());
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -16,10 +16,14 @@ namespace SmartAdSignage.Services.Services.Interfaces
 
         Task<IdentityResult> RegisterUserAsync(RegisterRequest registerRequest);
 
+        Task<IdentityResult> RegisterAdminAsync(RegisterRequest registerRequest);
+
         Task<IdentityResult> RevokeToken(string username);
 
         Task<string[]?> GenerateTokensAsync();
 
         Task<string[]?> RefreshTokensAsync(RefreshRequest refreshRequest);
+
+        Task<IEnumerable<User?>> GetUsersAsync();
     }
 }

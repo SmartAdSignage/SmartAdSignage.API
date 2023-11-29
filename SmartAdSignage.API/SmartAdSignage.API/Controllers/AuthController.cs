@@ -39,6 +39,14 @@ namespace SmartAdSignage.API.Controllers
             return !userResult.Succeeded ? new BadRequestObjectResult(userResult) : StatusCode(201);
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPost("register-admin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterRequest registerRequest)
+        {
+            var userResult = await _usersService.RegisterUserAsync(registerRequest);
+            return !userResult.Succeeded ? new BadRequestObjectResult(userResult) : StatusCode(201);
+        }
+
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh([FromBody] RefreshRequest refreshRequest)
         {
@@ -66,6 +74,15 @@ namespace SmartAdSignage.API.Controllers
                 return NoContent();
 
             return BadRequest(result);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        [Route("users")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await _usersService.GetUsersAsync();
+            return Ok(users);
         }
     }
 }

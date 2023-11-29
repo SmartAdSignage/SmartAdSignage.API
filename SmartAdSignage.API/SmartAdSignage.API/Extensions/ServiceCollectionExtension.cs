@@ -8,7 +8,7 @@ using System.Text;
 
 namespace SmartAdSignage.API.Extensions
 {
-    public static class ServiceExtension
+    public static class ServiceCollectionExtension
     {
         public static void ConfigureCors(this IServiceCollection services)
         {
