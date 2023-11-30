@@ -14,5 +14,7 @@ namespace SmartAdSignage.Repository.Repositories.Interfaces
         Task<TEntity> DeleteAsync(TEntity entity);
         Task<TEntity> GetByIdAsync(int id);
         Task<IEnumerable<TEntity>> GetAllAsync();
+        Task AddAsync(TEntity obj, CancellationToken cancellationToken = default);
+        Task AddManyAsync(IEnumerable<TEntity> obj, CancellationToken cancellationToken = default);
     }
 }

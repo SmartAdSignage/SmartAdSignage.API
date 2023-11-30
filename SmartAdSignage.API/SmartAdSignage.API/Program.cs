@@ -36,9 +36,15 @@ builder.Services.AddTransient<IGenericRepository<CampaignAdvertisement>, Generic
 builder.Services.AddTransient<IGenericRepository<Queue>, GenericRepository<Queue>>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdvertisementService, AdvertisementService>();
 builder.Services.AddScoped<IPanelService, PanelService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IIoTDeviceService, IoTDeviceService>();
+builder.Services.AddScoped<IAdCampaignService, AdCampaignService>();
+builder.Services.AddScoped<ICampaignAdvertisementService, CampaignAdvertisementService>();
+builder.Services.AddScoped<IQueueService, QueueService>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

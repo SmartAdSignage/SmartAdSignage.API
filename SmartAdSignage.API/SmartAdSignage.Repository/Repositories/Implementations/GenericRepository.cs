@@ -43,5 +43,16 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
         {
             throw new NotImplementedException();
         }
+
+        public async Task AddAsync(TEntity obj, CancellationToken cancellationToken = default)
+        {
+            await _dbSet.AddAsync(obj, cancellationToken: cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public async Task AddManyAsync(IEnumerable<TEntity> obj, CancellationToken cancellationToken = default)
+        {
+            await _dbSet.AddRangeAsync(obj, cancellationToken: cancellationToken);
+        }
     }
 }

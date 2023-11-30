@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SmartAdSignage.Core.Models;
 using SmartAdSignage.Repository.Data;
+using SmartAdSignage.Repository.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +16,10 @@ namespace SmartAdSignage.Repository
 {
     public class Seeder : ISeeder
     {
-        public Seeder()
+        private readonly IGenericRepository<Panel> _genericRepositoryPanels; 
+        public Seeder(IGenericRepository<Panel> genericRepositoryPanels)
         {
+            this._genericRepositoryPanels = genericRepositoryPanels;
         }
 
         public async Task EnsureSeedDataAsync(IServiceProvider serviceProvider)
@@ -25,10 +28,10 @@ namespace SmartAdSignage.Repository
 
             var aspNetCoreIdentityDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             await aspNetCoreIdentityDbContext.Database.MigrateAsync();
-            await SeedAsync(serviceProvider);
+            await SeedUsersAndRolesAsync(serviceProvider);
         }
 
-        private async Task SeedAsync(IServiceProvider serviceProvider)
+        private async Task SeedUsersAndRolesAsync(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
             var _userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
@@ -92,6 +95,28 @@ namespace SmartAdSignage.Repository
                         throw new Exception(result.Errors.First().Description);
                     }
                 }
+            }
+        }
+
+        private async Task SeedPanels(IServiceProvider serviceProvider) 
+        {
+            var panels = await _genericRepositoryPanels.GetAllAsync();
+            if (panels.Count() == 0) 
+            {
+                /*panels = new();
+                var faker = new Faker<Panel>()
+                    .RuleFor(p => p.Height, f => f.Random.Double(0, 100))
+                    .RuleFor(p => p.Width, f => f.Random.Double(0, 100))
+                    .RuleFor(p => p.Status, f => f.Random.String2(10))
+                    .RuleFor(p => p.Latitude, f => f.Random.Decimal(0, 100))
+                    .RuleFor(p => p.Longitude, f => f.Random.Decimal(0, 100))
+                    .RuleFor(p => p.LocationId, f => f.Random.Int(0, 100))
+                    .RuleFor(p => p.UserId, f => f.Random.String2(10))
+                    .Generate(5);
+                for (int i = 0; i < 5; i++) 
+                {
+
+                }*/
             }
         }
     }
