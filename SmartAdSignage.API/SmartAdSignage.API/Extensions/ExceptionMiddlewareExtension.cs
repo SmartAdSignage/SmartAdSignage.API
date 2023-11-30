@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using SmartAdSignage.Core.DTOs.Responses;
+using SmartAdSignage.Core.DTOs.Exception;
 using SmartAdSignage.Services.Services.Interfaces;
 using System.Net;
 

@@ -3,8 +3,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using SmartAdSignage.Core.DTOs.Requests;
-using SmartAdSignage.Core.DTOs.Responses;
 using SmartAdSignage.Repository.Data;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -12,16 +10,17 @@ using SmartAdSignage.Core.Models;
 using AutoMapper;
 using SmartAdSignage.Services.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using SmartAdSignage.Core.DTOs.User.Responses;
+using SmartAdSignage.Core.DTOs.User.Requests;
 
 namespace SmartAdSignage.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(SignInManager<User> signInManager, IMapper mapper, IUsersService usersService) : ControllerBase
+    public class AuthController(IMapper mapper, IUserService usersService) : ControllerBase
     {
-        private readonly SignInManager<User> signInManager = signInManager;
         private readonly IMapper _mapper = mapper;
-        private readonly IUsersService _usersService = usersService;
+        private readonly IUserService _usersService = usersService;
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
@@ -35,16 +34,20 @@ namespace SmartAdSignage.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var userResult = await _usersService.RegisterUserAsync(registerRequest);
-            return !userResult.Succeeded ? new BadRequestObjectResult(userResult) : StatusCode(201);
+            return !userResult.Succeeded ? new BadRequestObjectResult(userResult) : Created("", _mapper.Map<RegisteredUserResponse>(_mapper.Map<User>(registerRequest)));
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterRequest registerRequest)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var userResult = await _usersService.RegisterUserAsync(registerRequest);
-            return !userResult.Succeeded ? new BadRequestObjectResult(userResult) : StatusCode(201);
+            return !userResult.Succeeded ? new BadRequestObjectResult(userResult) : Created("", _mapper.Map<RegisteredUserResponse>(_mapper.Map<User>(registerRequest)));
         }
 
         [HttpPost("refresh")]
@@ -74,15 +77,6 @@ namespace SmartAdSignage.API.Controllers
                 return NoContent();
 
             return BadRequest(result);
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet]
-        [Route("users")]
-        public async Task<IActionResult> GetUsers()
-        {
-            var users = await _usersService.GetUsersAsync();
-            return Ok(users);
         }
     }
 }

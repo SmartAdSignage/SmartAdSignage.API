@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartAdSignage.Core.DTOs.Responses
+namespace SmartAdSignage.Core.DTOs.User.Responses
 {
     public class AuthenticatedResponse
     {

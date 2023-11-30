@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartAdSignage.Core.DTOs.Requests
+namespace SmartAdSignage.Core.DTOs.User.Requests
 {
     public class LoginRequest
     {

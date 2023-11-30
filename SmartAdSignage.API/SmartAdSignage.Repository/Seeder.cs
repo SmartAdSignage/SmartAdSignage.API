@@ -58,6 +58,7 @@ namespace SmartAdSignage.Repository
                         .RuleFor(u => u.UserName, username)
                         .RuleFor(u => u.FirstName, f => f.Person.FirstName)
                         .RuleFor(u => u.LastName, f => f.Person.LastName)
+                        .RuleFor(u => u.CompanyName, f => f.Company.CompanyName())
                         .RuleFor(u => u.Email, username)
                         .RuleFor(u => u.EmailConfirmed, true).Generate();
                     var result = await _userManager.CreateAsync(user, "Pass123$");

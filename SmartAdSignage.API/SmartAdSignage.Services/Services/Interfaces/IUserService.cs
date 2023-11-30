@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using SmartAdSignage.Core.DTOs.Requests;
+using SmartAdSignage.Core.DTOs.User.Requests;
 using SmartAdSignage.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SmartAdSignage.Services.Services.Interfaces
 {
-    public interface IUsersService
+    public interface IUserService
     {
         Task<bool> ValidateUserAsync(LoginRequest loginRequest);
 
@@ -25,5 +25,11 @@ namespace SmartAdSignage.Services.Services.Interfaces
         Task<string[]?> RefreshTokensAsync(RefreshRequest refreshRequest);
 
         Task<IEnumerable<User?>> GetUsersAsync();
+
+        Task<User> GetUserByNameAsync(string userName);
+
+        Task<IdentityResult> DeleteUserByNameAsync(string userName);
+
+        Task<IdentityResult> UpdateUserAsync(string userName, User user);
     }
 }

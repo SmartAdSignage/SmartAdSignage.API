@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace SmartAdSignage.Repository.Repositories.Implementations
 {
-    public class UsersRepository : IUsersRepository
+    public class UserRepository : IUserRepository
     {
         public ApplicationDbContext Context { get; set; }
         public UserManager<User> _userManager { get; set; }
-        public UsersRepository(ApplicationDbContext context, UserManager<User> userManager)
+        public UserRepository(ApplicationDbContext context, UserManager<User> userManager)
         {
             this.Context = context;
             this._userManager = userManager;

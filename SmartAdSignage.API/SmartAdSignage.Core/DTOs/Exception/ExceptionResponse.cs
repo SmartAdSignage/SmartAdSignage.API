@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace SmartAdSignage.Core.DTOs.Responses
+namespace SmartAdSignage.Core.DTOs.Exception
 {
     public class ExceptionResponse
     {

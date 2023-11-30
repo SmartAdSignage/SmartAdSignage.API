@@ -2,8 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using SmartAdSignage.Core.DTOs.Requests;
-using SmartAdSignage.Core.DTOs.Responses;
+using SmartAdSignage.Core.DTOs.User.Requests;
 using SmartAdSignage.Core.Models;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
@@ -14,15 +13,15 @@ using System.Text;
 
 namespace SmartAdSignage.Services.Services.Implementations
 {
-    public class UsersService : IUsersService
+    public class UserService : IUserService
     {
-        private readonly IUsersRepository _usersRepository;
+        private readonly IUserRepository _usersRepository;
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private User? _user;
 
-        public UsersService(IUsersRepository usersRepository, UserManager<User> userManager, IConfiguration configuration, IMapper mapper)
+        public UserService(IUserRepository usersRepository, UserManager<User> userManager, IConfiguration configuration, IMapper mapper)
         {
             this._usersRepository = usersRepository;
             this._userManager = userManager;
@@ -40,7 +39,7 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<bool> ValidateUserAsync(LoginRequest loginRequest)
         {
-            _user = await _userManager.FindByEmailAsync(loginRequest.UserName);
+            _user = await _usersRepository.GetByUsernameAsync(loginRequest.UserName);
             var result = _user != null && await _userManager.CheckPasswordAsync(_user, loginRequest.Password);
             return result;
         }
@@ -70,7 +69,7 @@ namespace SmartAdSignage.Services.Services.Implementations
             string refreshToken = refreshRequest.RefreshToken;
             var principal = GetPrincipalFromExpiredToken(accessToken);
             var username = principal.Identity.Name;
-            _user = await _userManager.FindByEmailAsync(username);
+            _user = await _usersRepository.GetByUsernameAsync(username);
             if (_user is null || _user.RefreshToken != refreshToken || _user.RefreshTokenExpiryTime <= DateTime.Now)
                 return null;
             var newToken = await GenerateAccessTokenAsync();
@@ -82,7 +81,7 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<IdentityResult> RevokeToken(string username)
         {
-            _user = await _userManager.FindByNameAsync(username);
+            _user = await _usersRepository.GetByUsernameAsync(username);
             if (_user == null)
                 return null;
 
@@ -170,6 +169,33 @@ namespace SmartAdSignage.Services.Services.Implementations
             if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
                 throw new SecurityTokenException("Invalid token");
             return principal;
+        }
+
+        public async Task<User> GetUserByNameAsync(string userName)
+        {
+            var result = await _usersRepository.GetByUsernameAsync(userName);
+            return result;
+        }
+
+        public async Task<IdentityResult> DeleteUserByNameAsync(string userName)
+        {
+            var result = await _usersRepository.GetByUsernameAsync(userName);
+            if (result == null)
+                return null;
+            return await _userManager.DeleteAsync(result);
+        }
+
+        public async Task<IdentityResult> UpdateUserAsync(string userName, User user)
+        {
+            var existingUser = await _usersRepository.GetByUsernameAsync(userName);
+            if (existingUser == null)
+                return null;
+            existingUser.FirstName = user.FirstName;
+            existingUser.LastName = user.LastName;
+            existingUser.CompanyName = user.CompanyName;
+            existingUser.Email = user.Email;
+            existingUser.UserName = user.Email;
+            return await _userManager.UpdateAsync(existingUser);
         }
     }
 }

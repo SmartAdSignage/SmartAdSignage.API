@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartAdSignage.Core.DTOs.Requests
+namespace SmartAdSignage.Core.DTOs.User.Requests
 {
     public class RegisterRequest
     {
@@ -14,7 +14,7 @@ namespace SmartAdSignage.Core.DTOs.Requests
 
         [Required(ErrorMessage = "Last name is required")]
         public string LastName { get; set; }
-        public string? CompanyName { get; set;}
+        public string? CompanyName { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress]
@@ -22,11 +22,11 @@ namespace SmartAdSignage.Core.DTOs.Requests
 
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
-        public string? Password { get; set; }
+        public string Password { get; set; }
 
         [Required]
         [Compare("Password", ErrorMessage = "Passwords do not match")]
         [DataType(DataType.Password)]
-        public string? ConfirmPassword { get; set;}
+        public string ConfirmPassword { get; set; }
     }
 }

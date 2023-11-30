@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SmartAdSignage.Repository.Repositories.Interfaces
 {
-    public interface IUsersRepository
+    public interface IUserRepository
     {
         Task<IEnumerable<User>> GetAllAsync();
 

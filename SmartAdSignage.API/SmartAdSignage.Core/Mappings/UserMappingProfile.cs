@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using SmartAdSignage.Core.DTOs.Requests;
+using SmartAdSignage.Core.DTOs.User.Requests;
+using SmartAdSignage.Core.DTOs.User.Responses;
 using SmartAdSignage.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,9 @@ namespace SmartAdSignage.Core.Mappings
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
 */
                 ;
+            CreateMap<User, RegisteredUserResponse>();
+            CreateMap<User, UserResponse>();
+            CreateMap<UpdateUserRequest, User>();
         }        
     }
 }

@@ -1,3 +1,4 @@
+using Autofac;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -25,8 +26,19 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 builder.Services.AddAuthorization();
-builder.Services.AddScoped<IUsersRepository, UsersRepository>();
-builder.Services.AddScoped<IUsersService, UsersService>();
+
+builder.Services.AddTransient<IGenericRepository<Advertisement>, GenericRepository<Advertisement>>();
+builder.Services.AddTransient<IGenericRepository<AdCampaign>, GenericRepository<AdCampaign>>();
+builder.Services.AddTransient<IGenericRepository<Panel>, GenericRepository<Panel>>();
+builder.Services.AddTransient<IGenericRepository<Location>, GenericRepository<Location>>();
+builder.Services.AddTransient<IGenericRepository<IoTDevice>, GenericRepository<IoTDevice>>();
+builder.Services.AddTransient<IGenericRepository<CampaignAdvertisement>, GenericRepository<CampaignAdvertisement>>();
+builder.Services.AddTransient<IGenericRepository<Queue>, GenericRepository<Queue>>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAdvertisementService, AdvertisementService>();
+builder.Services.AddScoped<IPanelService, PanelService>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
