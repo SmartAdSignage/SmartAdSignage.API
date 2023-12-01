@@ -36,7 +36,9 @@ namespace SmartAdSignage.API.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var userResult = await _usersService.RegisterUserAsync(registerRequest);
+            var user = _mapper.Map<User>(registerRequest);
+            string password = registerRequest.Password;
+            var userResult = await _usersService.RegisterUserAsync(user, password);
             return !userResult.Succeeded ? new BadRequestObjectResult(userResult) : Created("", _mapper.Map<RegisteredUserResponse>(_mapper.Map<User>(registerRequest)));
         }
 
@@ -46,7 +48,9 @@ namespace SmartAdSignage.API.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var userResult = await _usersService.RegisterUserAsync(registerRequest);
+            var user = _mapper.Map<User>(registerRequest);
+            string password = registerRequest.Password;
+            var userResult = await _usersService.RegisterUserAsync(user, password);
             return !userResult.Succeeded ? new BadRequestObjectResult(userResult) : Created("", _mapper.Map<RegisteredUserResponse>(_mapper.Map<User>(registerRequest)));
         }
 

@@ -110,6 +110,13 @@ namespace SmartAdSignage.API.Extensions
             var mapperConfig = new MapperConfiguration(map =>
             {
                 map.AddProfile<UserMappingProfile>();
+                map.AddProfile<LocationMappingProfile>();
+                map.AddProfile<IoTDeviceMappingProfile>();
+                map.AddProfile<AdvertisementMappingProfile>();
+                map.AddProfile<AdCampaignMappingProfile>();
+                map.AddProfile<CampaignAdvertisementMappingProfile>();
+                map.AddProfile<PanelMappingProfile>();
+                map.AddProfile<QueueMappingProfile>();
             });
             services.AddSingleton(mapperConfig.CreateMapper());
         }

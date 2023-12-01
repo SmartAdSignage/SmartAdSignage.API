@@ -9,10 +9,10 @@ namespace SmartAdSignage.Services.Services.Interfaces
 {
     public interface IAdCampaignService
     {
-        /*Task<AdCampaign> CreateAdCampaignAsync(AdCampaign adCampaign);
-        Task<AdCampaign> UpdateAdCampaignAsync(AdCampaign adCampaign);
-        Task<AdCampaign> DeleteAdCampaignAsync(AdCampaign adCampaign);
-        Task<AdCampaign> GetByIdAsync(int id);*/
+        Task<AdCampaign> CreateAdCampaignAsync(AdCampaign adCampaign);
+        AdCampaign UpdateAdCampaignAsync(int id, AdCampaign adCampaign);
+        bool DeleteAdCampaignByIdAsync(int id);
+        Task<AdCampaign> GetAdCampaignByIdAsync(int id);
         Task<IEnumerable<AdCampaign>> GetAllAdCampaignsAsync();
     }
 }

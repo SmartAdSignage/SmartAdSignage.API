@@ -29,10 +29,10 @@ namespace SmartAdSignage.Services.Services.Implementations
             this._mapper = mapper;
         }
 
-        public async Task<IdentityResult> RegisterUserAsync(RegisterRequest registerRequest)
+        public async Task<IdentityResult> RegisterUserAsync(User user, string password)
         {
-            var user = _mapper.Map<User>(registerRequest);
-            var result = await _userManager.CreateAsync(user, registerRequest.Password);
+            //var user = _mapper.Map<User>(registerRequest);
+            var result = await _userManager.CreateAsync(user, password);
             await _userManager.AddToRoleAsync(user, "User");
             return result;
         }
@@ -97,10 +97,10 @@ namespace SmartAdSignage.Services.Services.Implementations
             return users;
         }
 
-        public async Task<IdentityResult> RegisterAdminAsync(RegisterRequest registerRequest)
+        public async Task<IdentityResult> RegisterAdminAsync(User user, string password)
         {
-            var user = _mapper.Map<User>(registerRequest);
-            var result = await _userManager.CreateAsync(user, registerRequest.Password);
+            //var user = _mapper.Map<User>(registerRequest);
+            var result = await _userManager.CreateAsync(user, password);
             await _userManager.AddToRoleAsync(user, "Admin");
             return result;
         }

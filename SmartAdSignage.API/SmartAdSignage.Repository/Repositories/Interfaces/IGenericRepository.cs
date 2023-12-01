@@ -10,11 +10,13 @@ namespace SmartAdSignage.Repository.Repositories.Interfaces
     public interface IGenericRepository<TEntity> where TEntity : BaseEntity
     {
         Task<TEntity> AddAsync(TEntity entity);
-        Task<TEntity> UpdateAsyn(TEntity entity);
-        Task<TEntity> DeleteAsync(TEntity entity);
+        TEntity UpdateAsync(TEntity entity);
+        bool DeleteAsync(TEntity entity);
         Task<TEntity> GetByIdAsync(int id);
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task AddAsync(TEntity obj, CancellationToken cancellationToken = default);
         Task AddManyAsync(IEnumerable<TEntity> obj, CancellationToken cancellationToken = default);
+
+        Task Commit();
     }
 }

@@ -20,7 +20,13 @@ namespace SmartAdSignage.API.Controllers
             var result = await _locationService.GetAllLocationsAsync();
             if (result.Count() == 0)
                 return NotFound();
-            var locations = _mapper.Map<IEnumerable<LocationResponse>>(result);
+            /*List<LocationResponse> locations = new List<LocationResponse>();
+            foreach (var location in result)
+            {
+                var loc = _mapper.Map<LocationResponse>(location);
+                locations.Add(loc);
+            }*/
+            var locations = _mapper.Map<List<LocationResponse>>(result);
             return Ok(locations);
         }
     }

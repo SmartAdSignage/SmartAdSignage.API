@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartAdSignage.Core.DTOs.AdCampaign.Reponses
+namespace SmartAdSignage.Core.DTOs.AdCampaign.Requests
 {
-    public class AdCampaignResponse
+    public class UpdateAdCampaignRequest
     {
-        //public int Id { get; set; }
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }

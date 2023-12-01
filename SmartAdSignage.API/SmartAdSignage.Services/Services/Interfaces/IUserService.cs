@@ -14,9 +14,9 @@ namespace SmartAdSignage.Services.Services.Interfaces
     {
         Task<bool> ValidateUserAsync(LoginRequest loginRequest);
 
-        Task<IdentityResult> RegisterUserAsync(RegisterRequest registerRequest);
+        Task<IdentityResult> RegisterUserAsync(User user, string password);
 
-        Task<IdentityResult> RegisterAdminAsync(RegisterRequest registerRequest);
+        Task<IdentityResult> RegisterAdminAsync(User user, string password);
 
         Task<IdentityResult> RevokeToken(string username);
 

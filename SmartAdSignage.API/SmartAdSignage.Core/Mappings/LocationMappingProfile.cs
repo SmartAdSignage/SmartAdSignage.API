@@ -13,7 +13,13 @@ namespace SmartAdSignage.Core.Mappings
     {
         public LocationMappingProfile()
         {
-            CreateMap<Location, LocationResponse>();
+            CreateMap<Location, LocationResponse>().ReverseMap();
+                /*.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
+                .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street))
+                .ForMember(dest => dest.StreetType, opt => opt.MapFrom(src => src.StreetType))
+                .ForMember(dest => dest.BuildingNumber, opt => opt.MapFrom(src => src.BuildingNumber))*/
             /*CreateMap<SmartAdSignage.Core.DTOs.Location.Requests.CreateLocationRequest, SmartAdSignage.Core.Models.Location>();
             CreateMap<SmartAdSignage.Core.DTOs.Location.Requests.UpdateLocationRequest, SmartAdSignage.Core.Models.Location>();*/
         }

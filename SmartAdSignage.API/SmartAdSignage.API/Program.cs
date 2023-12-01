@@ -1,4 +1,5 @@
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -21,12 +22,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSingleton<ISeeder, Seeder>();
+builder.Services.AddScoped<ISeeder, Seeder>();
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 builder.Services.AddAuthorization();
 
+/*builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+var containerBuilder = new ContainerBuilder();
+containerBuilder.RegisterGeneric(typeof(GenericRepository<>)).As(typeof(IGenericRepository<>)).InstancePerLifetimeScope();
+containerBuilder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
+containerBuilder.RegisterType<Seeder>().As<ISeeder>().SingleInstance();*/
+/*builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();*/
 builder.Services.AddTransient<IGenericRepository<Advertisement>, GenericRepository<Advertisement>>();
 builder.Services.AddTransient<IGenericRepository<AdCampaign>, GenericRepository<AdCampaign>>();
 builder.Services.AddTransient<IGenericRepository<Panel>, GenericRepository<Panel>>();

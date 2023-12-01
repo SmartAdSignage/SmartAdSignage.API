@@ -9,6 +9,7 @@ namespace SmartAdSignage.Core.DTOs.Panel.Responses
 {
     public class PanelResponse
     {
+        public int Id { get; set; }
         public double Height { get; set; }
         public double Width { get; set; }
         public string? Status { get; set; }

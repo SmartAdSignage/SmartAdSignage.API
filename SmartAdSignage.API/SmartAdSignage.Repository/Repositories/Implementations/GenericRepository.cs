@@ -13,19 +13,29 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : BaseEntity
     {
         private readonly DbSet<TEntity> _dbSet;
+        private readonly ApplicationDbContext _applicationDbContext;
 
         public GenericRepository(ApplicationDbContext applicationDbContext)
         {
             this._dbSet = applicationDbContext.Set<TEntity>();
+            this._applicationDbContext = applicationDbContext;
         }
-        public Task<TEntity> AddAsync(TEntity entity)
+        public async Task<TEntity> AddAsync(TEntity entity)
         {
-            throw new NotImplementedException();
+            return (await _dbSet.AddAsync(entity)).Entity;
         }
 
-        public Task<TEntity> DeleteAsync(TEntity entity)
+        public bool DeleteAsync(TEntity entity)
         {
-            throw new NotImplementedException();
+            try 
+            {
+                _dbSet.Remove(entity);
+                return true;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<IEnumerable<TEntity>> GetAllAsync()
@@ -34,14 +44,14 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
             return entities;
         }
 
-        public Task<TEntity> GetByIdAsync(int id)
+        public async Task<TEntity> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _dbSet.FindAsync(id);
         }
 
-        public Task<TEntity> UpdateAsyn(TEntity entity)
+        public TEntity UpdateAsync(TEntity entity)
         {
-            throw new NotImplementedException();
+            return _dbSet.Update(entity).Entity;
         }
 
         public async Task AddAsync(TEntity obj, CancellationToken cancellationToken = default)
@@ -53,6 +63,11 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
         public async Task AddManyAsync(IEnumerable<TEntity> obj, CancellationToken cancellationToken = default)
         {
             await _dbSet.AddRangeAsync(obj, cancellationToken: cancellationToken);
+        }
+
+        public async Task Commit()
+        {
+            await _applicationDbContext.SaveChangesAsync();
         }
     }
 }
