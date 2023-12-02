@@ -12,7 +12,7 @@ namespace SmartAdSignage.Services.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<bool> ValidateUserAsync(LoginRequest loginRequest);
+        Task<bool> ValidateUserAsync(string username, string password);
 
         Task<IdentityResult> RegisterUserAsync(User user, string password);
 
@@ -22,7 +22,7 @@ namespace SmartAdSignage.Services.Services.Interfaces
 
         Task<string[]?> GenerateTokensAsync();
 
-        Task<string[]?> RefreshTokensAsync(RefreshRequest refreshRequest);
+        Task<string[]?> RefreshTokensAsync(string accessToken, string refreshToken);
 
         Task<IEnumerable<User?>> GetUsersAsync();
 
@@ -31,5 +31,7 @@ namespace SmartAdSignage.Services.Services.Interfaces
         Task<IdentityResult> DeleteUserByNameAsync(string userName);
 
         Task<IdentityResult> UpdateUserAsync(string userName, User user);
+
+        string GetConfiguration(string setting);
     }
 }

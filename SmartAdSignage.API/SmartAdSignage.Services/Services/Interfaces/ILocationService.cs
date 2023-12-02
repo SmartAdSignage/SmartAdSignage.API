@@ -9,10 +9,10 @@ namespace SmartAdSignage.Services.Services.Interfaces
 {
     public interface ILocationService
     {
-        /*Task<Location> CreateLocationAsync(Location location);
-        Task<Location> UpdateLocationAsync(Location location);
-        Task<Location> DeleteLocationAsync(Location location);
-        Task<Location> GetLocationByIdAsync(int id);*/
+        Task<Location> CreateLocationAsync(Location location);
+        Task<Location> UpdateLocationAsync(int id, Location location);
+        Task<Location> GetLocationByIdAsync(int id);
         Task<IEnumerable<Location>> GetAllLocationsAsync();
+        Task<bool> DeleteLocationByIdAsync(int id);
     }
 }

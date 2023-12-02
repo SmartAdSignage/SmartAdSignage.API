@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SmartAdSignage.Core.DTOs.Panel.Requests;
 using SmartAdSignage.Core.DTOs.Panel.Responses;
 using SmartAdSignage.Core.Models;
 using System;
@@ -14,6 +15,7 @@ namespace SmartAdSignage.Core.Mappings
         public PanelMappingProfile()
         {
             CreateMap<Panel, PanelResponse>().ReverseMap();
+            CreateMap<PanelRequest, Panel>();
             /*CreateMap<CreatePanelRequest, Panel>();
             CreateMap<UpdatePanelRequest, Panel>();*/
         }

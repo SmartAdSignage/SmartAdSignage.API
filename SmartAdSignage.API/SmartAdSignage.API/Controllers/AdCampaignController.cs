@@ -43,7 +43,7 @@ namespace SmartAdSignage.API.Controllers
         [Route("ad-campaign/{id}")]
         public async Task<IActionResult> DeleteAdCampaign(int id)
         {
-            var result = _adCampaignService.DeleteAdCampaignByIdAsync(id);
+            var result = await _adCampaignService.DeleteAdCampaignByIdAsync(id);
             if (result is false)
                 return NotFound();
             return NoContent();
@@ -51,19 +51,19 @@ namespace SmartAdSignage.API.Controllers
 
         [HttpPost]
         [Route("ad-campaign")]
-        public async Task<IActionResult> CreateAdCampaign(CreateAdCampaignRequest adCampaignRequest)
+        public async Task<IActionResult> CreateAdCampaign(AdCampaignRequest adCampaignRequest)
         {
             var adCampaign = _mapper.Map<AdCampaign>(adCampaignRequest);
             var result = await _adCampaignService.CreateAdCampaignAsync(adCampaign);
             if (result == null)
-                return NotFound();
+                return BadRequest();
             var adCampaignResponse = _mapper.Map<AdCampaignResponse>(result);
             return Ok(adCampaignResponse);
         }
 
         [HttpPut]
         [Route("ad-campaign/{id}")]
-        public async Task<IActionResult> UpdateAdCampaign(int id, UpdateAdCampaignRequest adCampaignRequest)
+        public async Task<IActionResult> UpdateAdCampaign(int id, AdCampaignRequest adCampaignRequest)
         {
             var adCampaign = _mapper.Map<AdCampaign>(adCampaignRequest);
             var result = _adCampaignService.UpdateAdCampaignAsync(id, adCampaign);

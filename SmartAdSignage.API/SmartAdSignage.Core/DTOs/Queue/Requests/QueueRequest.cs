@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartAdSignage.Core.DTOs.Queue.Responses
+namespace SmartAdSignage.Core.DTOs.Queue.Requests
 {
-    public class QueueResponse
+    public class QueueRequest
     {
-        public int Id { get; set; }
         public int? PanelId { get; set; }
         public int? AdvertisementId { get; set; }
         public int? DisplayOrder { get; set; }

@@ -22,7 +22,15 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
         }
         public async Task<TEntity> AddAsync(TEntity entity)
         {
-            return (await _dbSet.AddAsync(entity)).Entity;
+            try 
+            {
+                var result = (await _dbSet.AddAsync(entity)).Entity;
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public bool DeleteAsync(TEntity entity)
@@ -68,6 +76,14 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
         public async Task Commit()
         {
             await _applicationDbContext.SaveChangesAsync();
+            /*try 
+            {
+                
+            }
+            catch (Exception)
+            {
+                throw;
+            }*/
         }
     }
 }

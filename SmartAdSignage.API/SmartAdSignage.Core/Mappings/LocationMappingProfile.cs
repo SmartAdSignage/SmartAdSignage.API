@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SmartAdSignage.Core.DTOs.Location.Requests;
 using SmartAdSignage.Core.DTOs.Location.Responses;
 using SmartAdSignage.Core.Models;
 using System;
@@ -14,6 +15,7 @@ namespace SmartAdSignage.Core.Mappings
         public LocationMappingProfile()
         {
             CreateMap<Location, LocationResponse>().ReverseMap();
+            CreateMap<LocationRequest, Location>();
                 /*.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))

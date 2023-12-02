@@ -11,57 +11,51 @@ namespace SmartAdSignage.Services.Services.Implementations
 {
     public class AdCampaignService : IAdCampaignService
     {
-        private readonly IGenericRepository<AdCampaign> _genericRepository;
-        public AdCampaignService(IGenericRepository<AdCampaign> genericRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public AdCampaignService(IUnitOfWork unitOfWork)
         {
-            this._genericRepository = genericRepository;
+            this._unitOfWork = unitOfWork;
         }
-        public Task<AdCampaign> CreateAdCampaignAsync(AdCampaign adCampaign)
+        public async Task<AdCampaign> CreateAdCampaignAsync(AdCampaign adCampaign)
         {
-            var result = _genericRepository.AddAsync(adCampaign);
-            _genericRepository.Commit();
+            var result = await _unitOfWork.AdCampaigns.AddAsync(adCampaign);
+            await _unitOfWork.AdCampaigns.Commit();
             return result;
         }
 
-        public bool DeleteAdCampaignByIdAsync(int id)
+        public async Task<bool> DeleteAdCampaignByIdAsync(int id)
         {
-            var adCampaign = GetAdCampaignByIdAsync(id);
-            var result = _genericRepository.DeleteAsync(adCampaign.Result);
-            _genericRepository.Commit();
+            var adCampaign = await GetAdCampaignByIdAsync(id);
+            var result = _unitOfWork.AdCampaigns.DeleteAsync(adCampaign);
+            await _unitOfWork.AdCampaigns.Commit();
             return result;
         }
 
         public async Task<AdCampaign> GetAdCampaignByIdAsync(int id)
         {
-            return await _genericRepository.GetByIdAsync(id);
+            return await _unitOfWork.AdCampaigns.GetByIdAsync(id);
         }
 
         public async Task<IEnumerable<AdCampaign>> GetAllAdCampaignsAsync()
         {
-            return await _genericRepository.GetAllAsync();
+            return await _unitOfWork.AdCampaigns.GetAllAsync();
         }
 
-        public AdCampaign UpdateAdCampaignAsync(int id, AdCampaign adCampaign)
+        public async Task<AdCampaign> UpdateAdCampaignAsync(int id, AdCampaign adCampaign)
         {
-            var existingAdCampaign = GetAdCampaignByIdAsync(id).Result;
+            var existingAdCampaign = await _unitOfWork.AdCampaigns.GetByIdAsync(id);
             if (adCampaign.Status == "Started") 
-            {
-                existingAdCampaign.Status = adCampaign.Status;
                 existingAdCampaign.StartDate = DateTime.Now;
-                existingAdCampaign.EndDate = adCampaign.EndDate;
-                existingAdCampaign.TargetedViews = adCampaign.TargetedViews;
-                existingAdCampaign.UserId = adCampaign.UserId;
-            }
             else
-            {
-                existingAdCampaign.Status = adCampaign.Status;
                 existingAdCampaign.StartDate = adCampaign.StartDate;
-                existingAdCampaign.EndDate = adCampaign.EndDate;
-                existingAdCampaign.TargetedViews = adCampaign.TargetedViews;
-                existingAdCampaign.UserId = adCampaign.UserId;
-            }
-            var result = _genericRepository.UpdateAsync(existingAdCampaign);
-            _genericRepository.Commit();
+
+            existingAdCampaign.Status = adCampaign.Status;
+            existingAdCampaign.EndDate = adCampaign.EndDate;
+            existingAdCampaign.TargetedViews = adCampaign.TargetedViews;
+            existingAdCampaign.UserId = adCampaign.UserId;
+            existingAdCampaign.DateUpdated = DateTime.Now;
+            var result = _unitOfWork.AdCampaigns.UpdateAsync(existingAdCampaign);
+            await _unitOfWork.AdCampaigns.Commit();
             return result;
 
         }

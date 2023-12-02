@@ -35,8 +35,37 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
         {
             var user = await Context.Users.SingleOrDefaultAsync(u => u.UserName == username);
             user.RefreshToken = refreshToken;
-            /*user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);*/
             return 0 < await Context.SaveChangesAsync();
+        }
+
+        public async Task<IdentityResult> UpdateUser(User user)
+        {
+            return await _userManager.UpdateAsync(user);
+        }
+
+        public async Task<IdentityResult> CreateUserAsync(User user, string password)
+        {
+            return await _userManager.CreateAsync(user, password);
+        }
+
+        public async Task<IdentityResult> AddRoleToUserAsync(User user, string role)
+        {
+            return await _userManager.AddToRoleAsync(user, role);
+        }
+
+        public async Task<IList<string>> GetRolesForUserAsync(User user)
+        {
+            return await _userManager.GetRolesAsync(user);
+        }
+
+        public async Task<bool> CheckPasswordForUserAsync(User user, string password)
+        {
+            return await _userManager.CheckPasswordAsync(user, password);
+        }
+
+        public async Task<IdentityResult> DeleteUserAsync(User user)
+        {
+            return await _userManager.DeleteAsync(user);
         }
     }
 }

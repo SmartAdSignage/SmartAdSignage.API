@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartAdSignage.Core.DTOs.IoTDevice.Responses
+namespace SmartAdSignage.Core.DTOs.IoTDevice.Requests
 {
-    public class IoTDeviceResponse
+    public class IoTDeviceRequest
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
         public string? Name { get; set; }
 
         public string? Status { get; set; }

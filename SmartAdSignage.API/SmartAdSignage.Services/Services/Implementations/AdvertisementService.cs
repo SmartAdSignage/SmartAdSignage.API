@@ -11,20 +11,48 @@ namespace SmartAdSignage.Services.Services.Implementations
 {
     public class AdvertisementService : IAdvertisementService
     {
-        private readonly IGenericRepository<Advertisement> _genericRepository;
-        public AdvertisementService(IGenericRepository<Advertisement> genericRepository) 
+        private readonly IUnitOfWork _unitOfWork;
+        public AdvertisementService(IUnitOfWork unitOfWork)
         {
-            this._genericRepository = genericRepository;
+            this._unitOfWork = unitOfWork;
         }
 
-        public Task<Advertisement> AddAdvertisementAsync(Advertisement advertisement)
+        public async Task<Advertisement> CreateAdvertisementAsync(Advertisement advertisement)
         {
-            throw new NotImplementedException();
+            var result = await _unitOfWork.Advertisements.AddAsync(advertisement);
+            await _unitOfWork.Advertisements.Commit();
+            return result;
+        }
+
+        public async Task<bool> DeleteAdvertisementByIdAsync(int id)
+        {
+            var advertisement = await _unitOfWork.Advertisements.GetByIdAsync(id);
+            var result = _unitOfWork.Advertisements.DeleteAsync(advertisement);
+            await _unitOfWork.Advertisements.Commit();
+            return result;
+        }
+
+        public Task<Advertisement> GetAdvertisementByIdAsync(int id)
+        {
+            return _unitOfWork.Advertisements.GetByIdAsync(id);
         }
 
         public async Task<IEnumerable<Advertisement>> GetAllAdvertisements()
         {
-            return await _genericRepository.GetAllAsync();
+            return await _unitOfWork.Advertisements.GetAllAsync();
+        }
+
+        public async Task<Advertisement> UpdateAdvertisementAsync(int id, Advertisement advertisement)
+        {
+            var existingAdvertisement = await _unitOfWork.Advertisements.GetByIdAsync(id);
+            existingAdvertisement.Title = advertisement.Title;
+            existingAdvertisement.Type = advertisement.Type;
+            existingAdvertisement.File = advertisement.File;
+            existingAdvertisement.UserId = advertisement.UserId;
+            existingAdvertisement.DateUpdated = DateTime.Now;
+            var result = _unitOfWork.Advertisements.UpdateAsync(existingAdvertisement);
+            await _unitOfWork.Advertisements.Commit();
+            return result;
         }
     }
 }

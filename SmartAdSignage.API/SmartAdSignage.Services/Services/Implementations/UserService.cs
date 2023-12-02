@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using SmartAdSignage.Core.DTOs.User.Requests;
 using SmartAdSignage.Core.Models;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
@@ -16,31 +14,26 @@ namespace SmartAdSignage.Services.Services.Implementations
     public class UserService : IUserService
     {
         private readonly IUserRepository _usersRepository;
-        private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
         private User? _user;
 
-        public UserService(IUserRepository usersRepository, UserManager<User> userManager, IConfiguration configuration, IMapper mapper)
+        public UserService(IUserRepository usersRepository, IConfiguration configuration)
         {
             this._usersRepository = usersRepository;
-            this._userManager = userManager;
             this._configuration = configuration;
-            this._mapper = mapper;
         }
 
         public async Task<IdentityResult> RegisterUserAsync(User user, string password)
         {
-            //var user = _mapper.Map<User>(registerRequest);
-            var result = await _userManager.CreateAsync(user, password);
-            await _userManager.AddToRoleAsync(user, "User");
+            var result = await _usersRepository.CreateUserAsync(user, password);
+            await _usersRepository.AddRoleToUserAsync(user, "User");
             return result;
         }
 
-        public async Task<bool> ValidateUserAsync(LoginRequest loginRequest)
+        public async Task<bool> ValidateUserAsync(string username, string password)
         {
-            _user = await _usersRepository.GetByUsernameAsync(loginRequest.UserName);
-            var result = _user != null && await _userManager.CheckPasswordAsync(_user, loginRequest.Password);
+            _user = await _usersRepository.GetByUsernameAsync(username);
+            var result = _user != null && await _usersRepository.CheckPasswordForUserAsync(_user, password);
             return result;
         }
 
@@ -49,9 +42,8 @@ namespace SmartAdSignage.Services.Services.Implementations
             var token = await GenerateAccessTokenAsync();
             var refreshToken = GenerateRefreshTokenAsync();
             _user.RefreshToken = refreshToken;
-            _user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
-            await _userManager.UpdateAsync(_user);
-            /*await _usersRepository.SaveRefreshToken(_user.UserName, refreshToken);*/
+            _user.RefreshTokenExpiryTime = DateTime.Now.AddDays(Convert.ToDouble(GetConfiguration("refreshTokenExpiresInDays")/*["refreshTokenExpiresInDays"]*/));
+            await _usersRepository.UpdateUser(_user);
             return new string[] { token, refreshToken };
         }
 
@@ -63,10 +55,8 @@ namespace SmartAdSignage.Services.Services.Implementations
             return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
         }
 
-        public async Task<string[]?> RefreshTokensAsync(RefreshRequest refreshRequest)
+        public async Task<string[]?> RefreshTokensAsync(string accessToken, string refreshToken)
         {
-            string accessToken = refreshRequest.Token;
-            string refreshToken = refreshRequest.RefreshToken;
             var principal = GetPrincipalFromExpiredToken(accessToken);
             var username = principal.Identity.Name;
             _user = await _usersRepository.GetByUsernameAsync(username);
@@ -75,7 +65,8 @@ namespace SmartAdSignage.Services.Services.Implementations
             var newToken = await GenerateAccessTokenAsync();
             var newRefreshToken = GenerateRefreshTokenAsync();
             _user.RefreshToken = newRefreshToken;
-            await _userManager.UpdateAsync(_user);
+            await _usersRepository.UpdateUser(_user);
+            /*await _usersRepository.UpdateUser(_user);*/
             return new string[] { newToken, newRefreshToken };
         }
 
@@ -87,7 +78,7 @@ namespace SmartAdSignage.Services.Services.Implementations
 
             _user.RefreshToken = null;
             _user.RefreshTokenExpiryTime = DateTime.MinValue;
-            var res = await _userManager.UpdateAsync(_user);
+            var res = await _usersRepository.UpdateUser(_user);
             return res;
         }
 
@@ -99,16 +90,15 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<IdentityResult> RegisterAdminAsync(User user, string password)
         {
-            //var user = _mapper.Map<User>(registerRequest);
-            var result = await _userManager.CreateAsync(user, password);
-            await _userManager.AddToRoleAsync(user, "Admin");
+            var result = await _usersRepository.CreateUserAsync(user, password);
+            await _usersRepository.AddRoleToUserAsync(user, "Admin");
             return result;
         }
 
         private SigningCredentials GetSigningCredentials()
         {
-            var jwtConfig = _configuration.GetSection("JwtConfig");
-            var key = Encoding.UTF8.GetBytes(jwtConfig["secret"]);
+            /*var jwtConfig = GetConfiguration();*/
+            var key = Encoding.UTF8.GetBytes(GetConfiguration("secret")/* jwtConfig["secret"]*/);
             var secret = new SymmetricSecurityKey(key);
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
@@ -119,7 +109,7 @@ namespace SmartAdSignage.Services.Services.Implementations
             {
                 new Claim(ClaimTypes.Name, _user.UserName)
             };
-            var roles = await _userManager.GetRolesAsync(_user);
+            var roles = await _usersRepository.GetRolesForUserAsync(_user);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
@@ -129,16 +119,21 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
         {
-            var jwtSettings = _configuration.GetSection("JwtConfig");
+            /*var jwtSettings = GetConfiguration();*/
             var tokenOptions = new JwtSecurityToken
             (
-                issuer: jwtSettings["validIssuer"],
-                audience: jwtSettings["validAudience"],
+                issuer: GetConfiguration("validIssuer") /*jwtSettings["validIssuer"]*/,
+                audience: GetConfiguration("validAudience") /*jwtSettings["validAudience"]*/,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["expiresIn"])),
+                expires: DateTime.Now.AddMinutes(Convert.ToDouble(GetConfiguration("expiresInMinutes")/*jwtSettings["expiresInMinutes"]*/)),
                 signingCredentials: signingCredentials
             );
             return tokenOptions;
+        }
+
+        public string? GetConfiguration(string setting) 
+        {
+            return _configuration.GetSection("JwtConfig")[setting];
         }
 
         private string GenerateRefreshTokenAsync()
@@ -159,7 +154,7 @@ namespace SmartAdSignage.Services.Services.Implementations
                 ValidateAudience = false, //you might want to validate the audience and issuer depending on your use case
                 ValidateIssuer = false,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JwtConfig")["secret"])),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GetConfiguration("secret")/*["secret"]*/)),
                 ValidateLifetime = false //here we are saying that we don't care about the token's expiration date
             };
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -179,10 +174,10 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<IdentityResult> DeleteUserByNameAsync(string userName)
         {
-            var result = await _usersRepository.GetByUsernameAsync(userName);
-            if (result == null)
+            var user = await _usersRepository.GetByUsernameAsync(userName);
+            if (user == null)
                 return null;
-            return await _userManager.DeleteAsync(result);
+            return await _usersRepository.DeleteUserAsync(user);
         }
 
         public async Task<IdentityResult> UpdateUserAsync(string userName, User user)
@@ -195,7 +190,7 @@ namespace SmartAdSignage.Services.Services.Implementations
             existingUser.CompanyName = user.CompanyName;
             existingUser.Email = user.Email;
             existingUser.UserName = user.Email;
-            return await _userManager.UpdateAsync(existingUser);
+            return await _usersRepository.UpdateUser(existingUser);
         }
     }
 }

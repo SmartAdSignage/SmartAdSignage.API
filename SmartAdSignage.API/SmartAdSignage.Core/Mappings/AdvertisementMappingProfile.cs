@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SmartAdSignage.Core.DTOs.Advertisement.Requests;
 using SmartAdSignage.Core.DTOs.Advertisement.Responses;
 using SmartAdSignage.Core.Models;
 using System;
@@ -14,6 +15,8 @@ namespace SmartAdSignage.Core.Mappings
         public AdvertisementMappingProfile()
         {
             CreateMap<Advertisement, AdvertisementResponse>();
+            CreateMap<AdvertisementRequest, Advertisement>()
+                .ForMember(dest => dest.File, opt => opt.MapFrom(src => File.ReadAllBytes(src.File)));
         }
     }
 }

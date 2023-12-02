@@ -25,10 +25,13 @@ namespace SmartAdSignage.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
-            if (!await _usersService.ValidateUserAsync(loginRequest))
+            if (!await _usersService.ValidateUserAsync(loginRequest.UserName, loginRequest.Password))
                 return Unauthorized();
             string[]? tokens = await _usersService.GenerateTokensAsync();
-            return Ok(new AuthenticatedResponse { TokenType = "Bearer", Token = tokens[0], Expiration = DateTime.Now.AddMinutes(1), RefreshToken = tokens[1]});
+            return Ok(new AuthenticatedResponse { TokenType = "Bearer", 
+                Token = tokens[0], 
+                Expiration = DateTime.Now.AddMinutes(Convert.ToDouble(_usersService.GetConfiguration("expiresInMinutes"))),
+                RefreshToken = tokens[1]});
         }
 
         [HttpPost("register")]
@@ -59,10 +62,13 @@ namespace SmartAdSignage.API.Controllers
         {
             if (refreshRequest is null)
                 return BadRequest("Invalid client request");
-            var newTokens = await _usersService.RefreshTokensAsync(refreshRequest);
+            var newTokens = await _usersService.RefreshTokensAsync(refreshRequest.Token, refreshRequest.RefreshToken);
             if (newTokens is null)
                 return Unauthorized();
-            return Ok(new AuthenticatedResponse { TokenType = "Bearer", Token = newTokens[0], Expiration = DateTime.Now.AddMinutes(1), RefreshToken = newTokens[1] });
+            return Ok(new AuthenticatedResponse { TokenType = "Bearer", 
+                Token = newTokens[0], 
+                Expiration = DateTime.Now.AddMinutes(Convert.ToDouble(_usersService.GetConfiguration("expiresInMinutes"))), 
+                RefreshToken = newTokens[1] });
         }
 
         [Authorize]

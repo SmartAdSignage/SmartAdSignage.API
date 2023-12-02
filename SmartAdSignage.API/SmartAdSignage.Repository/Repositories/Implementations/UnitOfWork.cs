@@ -11,21 +11,21 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly Lazy<IGenericRepository<Advertisement>> _advertisementRepository;
-        private readonly Lazy<IGenericRepository<AdCampaign>> _adCampaignRepository;
-        private readonly Lazy<IGenericRepository<Panel>> _panelRepository;
-        private readonly Lazy<IGenericRepository<Location>> _locationRepository;
-        private readonly Lazy<IGenericRepository<IoTDevice>> _ioTdeviceRepository;
-        private readonly Lazy<IGenericRepository<CampaignAdvertisement>> _campaignadvertisementRepository;
-        private readonly Lazy<IGenericRepository<Queue>> _queueRepository;
+        private readonly IGenericRepository<Advertisement> _advertisementRepository;
+        private readonly IGenericRepository<AdCampaign> _adCampaignRepository;
+        private readonly IGenericRepository<Panel> _panelRepository;
+        private readonly IGenericRepository<Location> _locationRepository;
+        private readonly IGenericRepository<IoTDevice> _ioTdeviceRepository;
+        private readonly IGenericRepository<CampaignAdvertisement> _campaignadvertisementRepository;
+        private readonly IGenericRepository<Queue> _queueRepository;
 
-        public UnitOfWork(Lazy<IGenericRepository<Advertisement>> advertisementRepository,
-            Lazy<IGenericRepository<AdCampaign>> adCampaignRepository,
-            Lazy<IGenericRepository<Panel>> panelRepository,
-            Lazy<IGenericRepository<Location>> locationRepository,
-            Lazy<IGenericRepository<IoTDevice>> ioTdeviceRepository,
-            Lazy<IGenericRepository<CampaignAdvertisement>> campaignadvertisementRepository,
-            Lazy<IGenericRepository<Queue>> queueRepository)
+        public UnitOfWork(IGenericRepository<Advertisement> advertisementRepository,
+            IGenericRepository<AdCampaign> adCampaignRepository,
+            IGenericRepository<Panel> panelRepository,
+            IGenericRepository<Location> locationRepository,
+            IGenericRepository<IoTDevice> ioTdeviceRepository,
+            IGenericRepository<CampaignAdvertisement> campaignadvertisementRepository,
+            IGenericRepository<Queue> queueRepository)
         {
             _advertisementRepository = advertisementRepository;
             _adCampaignRepository = adCampaignRepository;
@@ -36,18 +36,18 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
             _queueRepository = queueRepository;
         }
 
-        public IGenericRepository<Advertisement> Advertisements => _advertisementRepository.Value;
+        public IGenericRepository<Advertisement> Advertisements => _advertisementRepository;
 
-        public IGenericRepository<AdCampaign> AdCampaigns => _adCampaignRepository.Value;
+        public IGenericRepository<AdCampaign> AdCampaigns => _adCampaignRepository;
 
-        public IGenericRepository<Panel> Panels => _panelRepository.Value;
+        public IGenericRepository<Panel> Panels => _panelRepository;
 
-        public IGenericRepository<Location> Locations => _locationRepository.Value;
+        public IGenericRepository<Location> Locations => _locationRepository;
 
-        public IGenericRepository<IoTDevice> IoTDevices => _ioTdeviceRepository.Value;
+        public IGenericRepository<IoTDevice> IoTDevices => _ioTdeviceRepository;
 
-        public IGenericRepository<CampaignAdvertisement> CampaignAdvertisements => _campaignadvertisementRepository.Value;
+        public IGenericRepository<CampaignAdvertisement> CampaignAdvertisements => _campaignadvertisementRepository;
 
-        public IGenericRepository<Queue> Queues => _queueRepository.Value;
+        public IGenericRepository<Queue> Queues => _queueRepository;
     }
 }

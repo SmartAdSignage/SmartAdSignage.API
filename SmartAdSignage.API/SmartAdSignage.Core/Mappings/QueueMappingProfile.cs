@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SmartAdSignage.Core.DTOs.Queue.Requests;
 using SmartAdSignage.Core.DTOs.Queue.Responses;
 using SmartAdSignage.Core.Models;
 using System;
@@ -14,6 +15,7 @@ namespace SmartAdSignage.Core.Mappings
         public QueueMappingProfile()
         {
             CreateMap<Queue, QueueResponse>();
+            CreateMap<QueueRequest, Queue>();
             /*CreateMap<CreateAdvertisementRequest, Advertisement>();
             CreateMap<UpdateAdvertisementRequest, Advertisement>();*/
         }

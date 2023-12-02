@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SmartAdSignage.Core.DTOs.AdCampaign.Requests
 {
-    public class CreateAdCampaignRequest
+    public class AdCampaignRequest
     {
         public DateTime? StartDate { get; set; }
 

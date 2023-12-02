@@ -15,8 +15,8 @@ namespace SmartAdSignage.Core.Mappings
         public AdCampaignMappingProfile()
         {
             CreateMap<AdCampaign, AdCampaignResponse>();
-            CreateMap<CreateAdCampaignRequest, AdCampaign>();
-            CreateMap<UpdateAdCampaignRequest, AdCampaign>();
+            CreateMap<AdCampaignRequest, AdCampaign>();
+            //CreateMap<AdCampaignRequest, AdCampaign>();
             /*CreateMap<CreateAdvertisementRequest, Advertisement>();
             CreateMap<UpdateAdvertisementRequest, Advertisement>();*/
         }

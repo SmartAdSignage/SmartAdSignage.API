@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SmartAdSignage.Core.DTOs.Advertisement.Requests
 {
-    public class CreateAdvertisementRequest
+    public class AdvertisementRequest
     {
         public string? Title { get; set; }
         public string? Type { get; set; }

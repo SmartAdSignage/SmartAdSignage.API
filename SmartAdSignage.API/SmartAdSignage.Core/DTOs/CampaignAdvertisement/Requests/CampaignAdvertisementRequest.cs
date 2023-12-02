@@ -4,17 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartAdSignage.Core.DTOs.CampaignAdvertisement.Responses
+namespace SmartAdSignage.Core.DTOs.CampaignAdvertisement.Requests
 {
-    public class CampaignAdvertisementResponse
+    public class CampaignAdvertisementRequest
     {
-        public int Id { get; set; }
         public int Views { get; set; }
-
         public int DisplayedTimes { get; set; }
-
         public int? AdCampaignId { get; set; }
-
         public int? AdvertisementId { get; set; }
     }
 }

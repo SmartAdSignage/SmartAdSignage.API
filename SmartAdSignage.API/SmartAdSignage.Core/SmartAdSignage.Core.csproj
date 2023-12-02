@@ -16,12 +16,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\CampaignAdvertisement\Requests\" />
-    <Folder Include="DTOs\IoTDevice\Requests\" />
-    <Folder Include="DTOs\Location\Requests\" />
-    <Folder Include="DTOs\Panel\Requests\" />
-    <Folder Include="DTOs\Queue\Requests\" />
-  </ItemGroup>
-
 </Project>

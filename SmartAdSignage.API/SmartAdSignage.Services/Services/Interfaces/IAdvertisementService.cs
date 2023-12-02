@@ -9,8 +9,13 @@ namespace SmartAdSignage.Services.Services.Interfaces
 {
     public interface IAdvertisementService
     {
-        Task<Advertisement> AddAdvertisementAsync(Advertisement advertisement);
+        Task<Advertisement> CreateAdvertisementAsync(Advertisement advertisement);
 
         Task<IEnumerable<Advertisement>> GetAllAdvertisements();
+
+        Task<Advertisement> GetAdvertisementByIdAsync(int id);
+
+        Task<Advertisement> UpdateAdvertisementAsync(int id, Advertisement advertisement);
+        Task<bool> DeleteAdvertisementByIdAsync(int id);
     }
 }

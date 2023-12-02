@@ -17,35 +17,17 @@ namespace SmartAdSignage.Repository
     public class Seeder : ISeeder
     {
         public readonly ApplicationDbContext _context;
-        private readonly IGenericRepository<Panel> _genericRepositoryPanels;
-        private readonly IGenericRepository<Location> _genericRepositoryLocations;
-        private readonly IGenericRepository<Advertisement> _genericRepositoryAdvertisements;
-        private readonly IGenericRepository<AdCampaign> _genericRepositoryAdCampaigns;
-        private readonly IGenericRepository<CampaignAdvertisement> _genericRepositoryCampaignAdvertisements;
-        private readonly IGenericRepository<IoTDevice> _genericRepositoryIoTDevices;
-        private readonly IGenericRepository<Queue> _genericRepositoryQueues;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public Seeder(ApplicationDbContext context,
-            IGenericRepository<Panel> genericRepositoryPanels, 
-            IGenericRepository<Location> genericRepositoryLocations, 
-            IGenericRepository<Advertisement> genericRepositoryAdvertisements, 
-            IGenericRepository<AdCampaign> genericRepositoryAdCampaigns, 
-            IGenericRepository<CampaignAdvertisement> genericRepositoryCampaignAdvertisements, 
-            IGenericRepository<IoTDevice> genericRepositoryIoTDevices, 
-            IGenericRepository<Queue> genericRepositoryQueues, 
+            IUnitOfWork unitOfWork,
             UserManager<User> userManager, 
             RoleManager<IdentityRole> roleManager)
         {
             _context = context;
-            _genericRepositoryPanels = genericRepositoryPanels;
-            _genericRepositoryLocations = genericRepositoryLocations;
-            _genericRepositoryAdvertisements = genericRepositoryAdvertisements;
-            _genericRepositoryAdCampaigns = genericRepositoryAdCampaigns;
-            _genericRepositoryCampaignAdvertisements = genericRepositoryCampaignAdvertisements;
-            _genericRepositoryIoTDevices = genericRepositoryIoTDevices;
-            _genericRepositoryQueues = genericRepositoryQueues;
+            _unitOfWork = unitOfWork;
             _userManager = userManager;
             _roleManager = roleManager;
         }
@@ -128,7 +110,7 @@ namespace SmartAdSignage.Repository
         private async Task SeedDataAsync(IServiceProvider serviceProvider) 
         {
             var userId = _userManager.Users.First().Id;
-            var location = await _genericRepositoryLocations.GetAllAsync();
+            var location = await _unitOfWork.Locations.GetAllAsync();
             if (location.Count() == 0)
             {
                 //var newLocations = new List<Location>();
@@ -140,14 +122,14 @@ namespace SmartAdSignage.Repository
                     .RuleFor(l => l.BuildingNumber, f => f.Random.String2(10))
                     .Generate(5)).ToList();
 
-                await _genericRepositoryLocations.AddManyAsync(newLocations);
+                await _unitOfWork.Locations.AddManyAsync(newLocations);
                 await _context.SaveChangesAsync();
             }   
-            var panels = await _genericRepositoryPanels.GetAllAsync();
+            var panels = await _unitOfWork.Panels.GetAllAsync();
             if (panels.Count() == 0) 
             {
                 //var newPanels = new List<Panel>();
-                var locationId = (await _genericRepositoryLocations.GetAllAsync()).First().Id;
+                var locationId = (await _unitOfWork.Locations.GetAllAsync()).First().Id;
                 var newPanels = new Faker<Panel>()
                     .RuleFor(p => p.Height, f => f.Random.Double(0, 100))
                     .RuleFor(p => p.Width, f => f.Random.Double(0, 100))
@@ -158,48 +140,48 @@ namespace SmartAdSignage.Repository
                     .RuleFor(p => p.UserId, userId)
                     .Generate(5).ToList();
 
-                await _genericRepositoryPanels.AddManyAsync(newPanels);
+                await _unitOfWork.Panels.AddManyAsync(newPanels);
                 await _context.SaveChangesAsync();
             }
-            var iotDevices = await _genericRepositoryIoTDevices.GetAllAsync();
+            var iotDevices = await _unitOfWork.IoTDevices.GetAllAsync();
             if (iotDevices.Count() == 0)
             {
-                var panelId = (await _genericRepositoryPanels.GetAllAsync()).First().Id;
+                var panelId = (await _unitOfWork.Panels.GetAllAsync()).First().Id;
                 var newIoTDevices = new Faker<IoTDevice>()
                     .RuleFor(i => i.Name, f => f.Random.String2(10))
                     .RuleFor(i => i.Status, f => f.Random.String2(10))
                     .RuleFor(i => i.PanelId, panelId)
                     .Generate(5).ToList();
-                await _genericRepositoryIoTDevices.AddManyAsync(newIoTDevices);
+                await _unitOfWork.IoTDevices.AddManyAsync(newIoTDevices);
                 await _context.SaveChangesAsync();
             }
-            var advertisements = await _genericRepositoryAdvertisements.GetAllAsync();
+            var advertisements = await _unitOfWork.Advertisements.GetAllAsync();
             if (advertisements.Count() == 0)
             {
 
                 var newAdvertisements = new Faker<Advertisement>()
                     .RuleFor(a => a.Title, f => f.Random.String2(10))
                     .RuleFor(a => a.Type, f => f.Random.String2(10))
-                    .RuleFor(a => a.File, File.ReadAllBytes(@"C:\Users\Admin\OneDrive\Рабочий стол\Скріни\Wow.jpg"))
+                    .RuleFor(a => a.File, File.ReadAllBytes("C:\\Users\\Admin\\OneDrive\\Рабочий стол\\Скріни\\Wow.jpg"))
                     .RuleFor(a => a.UserId, userId)
                     .Generate(5).ToList();
-                await _genericRepositoryAdvertisements.AddManyAsync(newAdvertisements);
+                await _unitOfWork.Advertisements.AddManyAsync(newAdvertisements);
                 await _context.SaveChangesAsync();
             }
-            var queues = await _genericRepositoryQueues.GetAllAsync();
+            var queues = await _unitOfWork.Queues.GetAllAsync();
             if (queues.Count() == 0)
             {
-                var panelId = (await _genericRepositoryPanels.GetAllAsync()).First().Id;
-                var advertisementId = (await _genericRepositoryAdvertisements.GetAllAsync()).First().Id;
+                var panelId = (await _unitOfWork.Panels.GetAllAsync()).First().Id;
+                var advertisementId = (await _unitOfWork.Advertisements.GetAllAsync()).First().Id;
                 var newQueues = new Faker<Queue>()
                     .RuleFor(q => q.AdvertisementId, advertisementId)
                     .RuleFor(q => q.PanelId, panelId)
                     .RuleFor(q => q.DisplayOrder, f => f.Random.Int(10))
                     .Generate(5).ToList();
-                await _genericRepositoryQueues.AddManyAsync(newQueues);
+                await _unitOfWork.Queues.AddManyAsync(newQueues);
                 await _context.SaveChangesAsync();
             }
-            var adCampaigns = await _genericRepositoryAdCampaigns.GetAllAsync();
+            var adCampaigns = await _unitOfWork.AdCampaigns.GetAllAsync();
             if (adCampaigns.Count() == 0)
             {
                 var newAdCampaigns = new Faker<AdCampaign>()
@@ -209,21 +191,21 @@ namespace SmartAdSignage.Repository
                     .RuleFor(a => a.TargetedViews, f => f.Random.Int(10000, 100000))
                     .RuleFor(a => a.UserId, userId)
                     .Generate(5).ToList();
-                await _genericRepositoryAdCampaigns.AddManyAsync(newAdCampaigns);
+                await _unitOfWork.AdCampaigns.AddManyAsync(newAdCampaigns);
                 await _context.SaveChangesAsync();
             }
-            var camapaignAdvertisements = await _genericRepositoryCampaignAdvertisements.GetAllAsync();
+            var camapaignAdvertisements = await _unitOfWork.CampaignAdvertisements.GetAllAsync();
             if (camapaignAdvertisements.Count() == 0)
             {
-                var adCampaignId = (await _genericRepositoryAdCampaigns.GetAllAsync()).First().Id;
-                var advertisementId = (await _genericRepositoryAdvertisements.GetAllAsync()).First().Id;
+                var adCampaignId = (await _unitOfWork.AdCampaigns.GetAllAsync()).First().Id;
+                var advertisementId = (await _unitOfWork.Advertisements.GetAllAsync()).First().Id;
                 var newCampaignAdvertisements = new Faker<CampaignAdvertisement>()
                     .RuleFor(c => c.AdvertisementId, advertisementId)
                     .RuleFor(c => c.AdCampaignId, adCampaignId)
                     .RuleFor(c => c.Views, f => f.Random.Int(10000, 100000))
                     .RuleFor(c => c.DisplayedTimes, f => f.Random.Int(2, 20))
                     .Generate(5).ToList();
-                await _genericRepositoryCampaignAdvertisements.AddManyAsync(newCampaignAdvertisements);
+                await _unitOfWork.CampaignAdvertisements.AddManyAsync(newCampaignAdvertisements);
                 await _context.SaveChangesAsync();
             }
         }

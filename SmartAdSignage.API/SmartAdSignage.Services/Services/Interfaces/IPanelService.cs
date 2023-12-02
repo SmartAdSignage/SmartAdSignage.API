@@ -9,10 +9,10 @@ namespace SmartAdSignage.Services.Services.Interfaces
 {
     public interface IPanelService
     {
-        /*Task<Panel> CreatePanelAsync(Panel panel);
-        Task<Panel> UpdatePanelAsync(Panel panel);
-        Task<Panel> DeletePanelAsync(Panel panel);
-        Task<Panel> GetByIdAsync(int id);*/
+        Task<Panel> CreatePanelAsync(Panel panel);
+        Task<Panel> UpdatePanelAsync(int id, Panel panel);
+        Task<bool> DeletePanelByIdAsync(int id);
+        Task<Panel> GetPanelByIdAsync(int id);
         Task<IEnumerable<Panel>> GetAllPanelsAsync();
     }
 }

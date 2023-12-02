@@ -20,6 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+//builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<ISeeder, Seeder>();
@@ -28,12 +29,15 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddDefaultTokenProviders();
 builder.Services.AddAuthorization();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
 /*builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 var containerBuilder = new ContainerBuilder();
 containerBuilder.RegisterGeneric(typeof(GenericRepository<>)).As(typeof(IGenericRepository<>)).InstancePerLifetimeScope();
 containerBuilder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
 containerBuilder.RegisterType<Seeder>().As<ISeeder>().SingleInstance();*/
-/*builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();*/
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IGenericRepository<Advertisement>, GenericRepository<Advertisement>>();
 builder.Services.AddTransient<IGenericRepository<AdCampaign>, GenericRepository<AdCampaign>>();
 builder.Services.AddTransient<IGenericRepository<Panel>, GenericRepository<Panel>>();
@@ -50,12 +54,9 @@ builder.Services.AddScoped<IPanelService, PanelService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IIoTDeviceService, IoTDeviceService>();
 builder.Services.AddScoped<IAdCampaignService, AdCampaignService>();
-builder.Services.AddScoped<ICampaignAdvertisementService, CampaignAdvertisementService>();
+builder.Services.AddScoped<ICampaignAdService, CampaignAdService>();
 builder.Services.AddScoped<IQueueService, QueueService>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureJWT(builder.Configuration);
