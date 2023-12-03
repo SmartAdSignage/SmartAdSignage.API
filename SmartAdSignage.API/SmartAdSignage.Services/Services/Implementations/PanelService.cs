@@ -45,6 +45,8 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<Panel> UpdatePanelAsync(int id, Panel panel)
         {
             var exsistingPanel = await _unitOfWork.Panels.GetByIdAsync(id);
+            if (exsistingPanel == null)
+                return null;
             exsistingPanel.Width = panel.Width;
             exsistingPanel.Height = panel.Height;
             exsistingPanel.Longitude = panel.Longitude;

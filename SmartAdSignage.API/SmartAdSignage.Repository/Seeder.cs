@@ -115,11 +115,11 @@ namespace SmartAdSignage.Repository
             {
                 //var newLocations = new List<Location>();
                 var newLocations = (new Faker<Location>()
-                    .RuleFor(l => l.Country, f => f.Random.String2(10))
-                    .RuleFor(l => l.City, f => f.Random.String2(10))
-                    .RuleFor(l => l.Street, f => f.Random.String2(10))
-                    .RuleFor(l => l.StreetType, f => f.Random.String2(10))
-                    .RuleFor(l => l.BuildingNumber, f => f.Random.String2(10))
+                    .RuleFor(l => l.Country, f => f.Address.Country())
+                    .RuleFor(l => l.City, f => f.Address.City())
+                    .RuleFor(l => l.Street, f => f.Address.StreetAddress())
+                    .RuleFor(l => l.StreetType, "Street")
+                    .RuleFor(l => l.BuildingNumber, f => f.Random.Int(10).ToString())
                     .Generate(5)).ToList();
 
                 await _unitOfWork.Locations.AddManyAsync(newLocations);
@@ -133,7 +133,7 @@ namespace SmartAdSignage.Repository
                 var newPanels = new Faker<Panel>()
                     .RuleFor(p => p.Height, f => f.Random.Double(0, 100))
                     .RuleFor(p => p.Width, f => f.Random.Double(0, 100))
-                    .RuleFor(p => p.Status, f => f.Random.String2(10))
+                    .RuleFor(p => p.Status, "Works")
                     .RuleFor(p => p.Latitude, f => f.Random.Decimal(0, 100))
                     .RuleFor(p => p.Longitude, f => f.Random.Decimal(0, 100))
                     .RuleFor(p => p.LocationId, locationId)
@@ -176,7 +176,7 @@ namespace SmartAdSignage.Repository
                 var newQueues = new Faker<Queue>()
                     .RuleFor(q => q.AdvertisementId, advertisementId)
                     .RuleFor(q => q.PanelId, panelId)
-                    .RuleFor(q => q.DisplayOrder, f => f.Random.Int(10))
+                    .RuleFor(q => q.DisplayOrder, f => f.Random.Int(1, 15))
                     .Generate(5).ToList();
                 await _unitOfWork.Queues.AddManyAsync(newQueues);
                 await _context.SaveChangesAsync();
@@ -184,12 +184,14 @@ namespace SmartAdSignage.Repository
             var adCampaigns = await _unitOfWork.AdCampaigns.GetAllAsync();
             if (adCampaigns.Count() == 0)
             {
+                panels = await _unitOfWork.Panels.GetAllAsync();
                 var newAdCampaigns = new Faker<AdCampaign>()
                     .RuleFor(a => a.Status, f => f.Random.String2(10))
                     .RuleFor(a => a.StartDate, f => f.Date.Past())
                     .RuleFor(a => a.EndDate, f => f.Date.Future())
                     .RuleFor(a => a.TargetedViews, f => f.Random.Int(10000, 100000))
                     .RuleFor(a => a.UserId, userId)
+                    .RuleFor(a => a.Panels, panels)
                     .Generate(5).ToList();
                 await _unitOfWork.AdCampaigns.AddManyAsync(newAdCampaigns);
                 await _context.SaveChangesAsync();

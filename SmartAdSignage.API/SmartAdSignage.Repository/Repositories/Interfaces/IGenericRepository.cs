@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +17,11 @@ namespace SmartAdSignage.Repository.Repositories.Interfaces
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task AddAsync(TEntity obj, CancellationToken cancellationToken = default);
         Task AddManyAsync(IEnumerable<TEntity> obj, CancellationToken cancellationToken = default);
+
+        Task<IList<TEntity>> GetByConditionAsync(
+        Expression<Func<TEntity, bool>> predicate,
+        Expression<Func<TEntity, TEntity>> selector = null,
+        CancellationToken cancellationToken = default);
 
         Task Commit();
     }

@@ -45,6 +45,8 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<Advertisement> UpdateAdvertisementAsync(int id, Advertisement advertisement)
         {
             var existingAdvertisement = await _unitOfWork.Advertisements.GetByIdAsync(id);
+            if (existingAdvertisement == null)
+                return null;
             existingAdvertisement.Title = advertisement.Title;
             existingAdvertisement.Type = advertisement.Type;
             existingAdvertisement.File = advertisement.File;

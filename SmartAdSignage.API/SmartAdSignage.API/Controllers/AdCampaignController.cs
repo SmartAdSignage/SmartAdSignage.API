@@ -66,11 +66,31 @@ namespace SmartAdSignage.API.Controllers
         public async Task<IActionResult> UpdateAdCampaign(int id, AdCampaignRequest adCampaignRequest)
         {
             var adCampaign = _mapper.Map<AdCampaign>(adCampaignRequest);
-            var result = _adCampaignService.UpdateAdCampaignAsync(id, adCampaign);
+            var result = await _adCampaignService.UpdateAdCampaignAsync(id, adCampaign);
             if (result == null)
                 return NotFound();
             var adCampaignResponse = _mapper.Map<AdCampaignResponse>(result);
             return Ok(adCampaignResponse);
+        }
+
+        [HttpGet]
+        [Route("results/{userId}")]
+        public async Task<IActionResult> GetResults(string userId)
+        {
+            var adCampaigns = await _adCampaignService.GetFinishedAdCampaigns(userId);
+            if (adCampaigns.Count() == 0 || adCampaigns == null)
+                return NotFound();
+            IList<FinishedAdCampaignResponse> results = new List<FinishedAdCampaignResponse>();
+            foreach (var adCampaign in adCampaigns)
+            {
+                var res = _mapper.Map<FinishedAdCampaignResponse>(adCampaign);
+                var statistics = await _adCampaignService.GetStatistics(adCampaign);
+                res.OverallViews = statistics[0];
+                res.OverallDisplays = statistics[1];
+                res.AdvertisementsDisplayed = statistics[2];
+                results.Add(res);
+            }
+            return Ok(results);
         }
     }
 }

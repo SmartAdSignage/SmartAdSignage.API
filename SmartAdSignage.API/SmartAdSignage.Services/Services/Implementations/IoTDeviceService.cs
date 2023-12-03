@@ -45,6 +45,8 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<IoTDevice> UpdateIoTDeviceAsync(int id, IoTDevice ioTDevice)
         {
             var existingIoTDevice = await _unitOfWork.IoTDevices.GetByIdAsync(id);
+            if (existingIoTDevice == null)
+                return null;
             existingIoTDevice.Name = ioTDevice.Name;
             existingIoTDevice.Status = ioTDevice.Status;
             existingIoTDevice.PanelId = ioTDevice.PanelId;

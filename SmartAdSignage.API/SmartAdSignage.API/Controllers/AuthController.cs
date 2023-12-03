@@ -42,7 +42,9 @@ namespace SmartAdSignage.API.Controllers
             var user = _mapper.Map<User>(registerRequest);
             string password = registerRequest.Password;
             var userResult = await _usersService.RegisterUserAsync(user, password);
-            return !userResult.Succeeded ? new BadRequestObjectResult(userResult) : Created("", _mapper.Map<RegisteredUserResponse>(_mapper.Map<User>(registerRequest)));
+            var createdUser = _mapper.Map<RegisteredUserResponse>(user);
+            createdUser.Role = "User";
+            return !userResult.Succeeded ? new BadRequestObjectResult(userResult) : Created("", createdUser);
         }
 
         [Authorize(Roles = "Admin")]
@@ -54,7 +56,9 @@ namespace SmartAdSignage.API.Controllers
             var user = _mapper.Map<User>(registerRequest);
             string password = registerRequest.Password;
             var userResult = await _usersService.RegisterUserAsync(user, password);
-            return !userResult.Succeeded ? new BadRequestObjectResult(userResult) : Created("", _mapper.Map<RegisteredUserResponse>(_mapper.Map<User>(registerRequest)));
+            var createdUser = _mapper.Map<RegisteredUserResponse>(user);
+            createdUser.Role = "Admin";
+            return !userResult.Succeeded ? new BadRequestObjectResult(userResult) : Created("", createdUser);
         }
 
         [HttpPost("refresh")]

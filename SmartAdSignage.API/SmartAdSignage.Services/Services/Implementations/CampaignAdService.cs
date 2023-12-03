@@ -44,6 +44,8 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<CampaignAdvertisement> UpdateCampaignAdvertisementAsync(int id, CampaignAdvertisement campaignAdvertisement)
         {
             var existingCampaignAdvertisement = await _unitOfWork.CampaignAdvertisements.GetByIdAsync(id);
+            if (existingCampaignAdvertisement == null)
+                return null;
             existingCampaignAdvertisement.Views = campaignAdvertisement.Views;
             existingCampaignAdvertisement.AdvertisementId = campaignAdvertisement.AdvertisementId;
             existingCampaignAdvertisement.AdCampaignId = campaignAdvertisement.AdCampaignId;

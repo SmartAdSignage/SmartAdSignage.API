@@ -45,6 +45,8 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<Queue> UpdateQueueAsync(int id, Queue queue)
         {
             var existingQueue = await _unitOfWork.Queues.GetByIdAsync(id);
+            if (existingQueue == null)
+                return null;
             existingQueue.DisplayOrder = queue.DisplayOrder;
             existingQueue.AdvertisementId = queue.AdvertisementId;
             existingQueue.PanelId = queue.PanelId;

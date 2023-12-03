@@ -18,6 +18,8 @@ namespace SmartAdSignage.Services.Services.Implementations
         }
         public async Task<AdCampaign> CreateAdCampaignAsync(AdCampaign adCampaign)
         {
+            if (!ValidateAdCampaign(adCampaign)) 
+                return null;
             var result = await _unitOfWork.AdCampaigns.AddAsync(adCampaign);
             await _unitOfWork.AdCampaigns.Commit();
             return result;
@@ -44,12 +46,11 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<AdCampaign> UpdateAdCampaignAsync(int id, AdCampaign adCampaign)
         {
             var existingAdCampaign = await _unitOfWork.AdCampaigns.GetByIdAsync(id);
-            if (adCampaign.Status == "Started") 
-                existingAdCampaign.StartDate = DateTime.Now;
-            else
-                existingAdCampaign.StartDate = adCampaign.StartDate;
-
-            existingAdCampaign.Status = adCampaign.Status;
+            if (existingAdCampaign == null)
+                return null;
+            if (!ValidateAdCampaign(adCampaign))
+                return null;
+            //existingAdCampaign.Status = adCampaign.Status;
             existingAdCampaign.EndDate = adCampaign.EndDate;
             existingAdCampaign.TargetedViews = adCampaign.TargetedViews;
             existingAdCampaign.UserId = adCampaign.UserId;
@@ -58,6 +59,42 @@ namespace SmartAdSignage.Services.Services.Implementations
             await _unitOfWork.AdCampaigns.Commit();
             return result;
 
+        }
+
+        public async Task<IEnumerable<AdCampaign>> GetFinishedAdCampaigns(string userId)
+        {
+            var adCampaigns = await _unitOfWork.AdCampaigns.GetByConditionAsync(x => x.UserId == userId && x.EndDate <= DateTime.Now);
+            return adCampaigns;
+        }
+
+        public async Task<int[]> GetStatistics(AdCampaign adCampaign) 
+        {
+            var views = (await _unitOfWork.CampaignAdvertisements.GetByConditionAsync(x => x.AdCampaignId == adCampaign.Id)).Sum(i => i.Views);
+            var overallDisplays = (await _unitOfWork.CampaignAdvertisements.GetByConditionAsync(x => x.AdCampaignId == adCampaign.Id)).Sum(i => i.DisplayedTimes);
+            var advertsDisplayed = (await _unitOfWork.CampaignAdvertisements.GetByConditionAsync(x => x.AdCampaignId == adCampaign.Id)).Count();
+            /*if (adCampaign.Status != "Finished")
+                adCampaign.Status = "Finished";*/
+            return new int[] { views, overallDisplays, advertsDisplayed };
+        }
+
+        private bool ValidateAdCampaign(AdCampaign adCampaign) 
+        {
+            if (!CheckDates(adCampaign))
+                return false;
+            if (adCampaign.StartDate <= DateTime.Now) 
+            {
+                adCampaign.StartDate = DateTime.Now; 
+                if (adCampaign.Status != "Started")
+                    adCampaign.Status = "Started";
+            }
+            return true;
+        }
+
+        private bool CheckDates(AdCampaign adCampaign)
+        {
+            if (adCampaign.StartDate >= adCampaign.EndDate || adCampaign.EndDate <= DateTime.Now)
+                return false;
+            return true;
         }
     }
 }

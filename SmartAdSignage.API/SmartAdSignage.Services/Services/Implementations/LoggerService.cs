@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿//using Microsoft.Extensions.Logging;
 using SmartAdSignage.Services.Services.Interfaces;
-//using Serilog;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,26 +11,27 @@ namespace SmartAdSignage.Services.Services.Implementations
 {
     public class LoggerService : ILoggerService
     {
-        private readonly ILogger<LoggerService> logger;
-        public LoggerService(ILogger<LoggerService> logger) 
+        private readonly ILogger logger;
+        public LoggerService(ILogger logger) 
         {
             this.logger = logger;
         }
         public void LogDebug(string message)
         {
-            logger.LogDebug(message);
+            logger.Debug(message);
         }
         public void LogError(string message)
         {
-            logger.LogError(message);
+            logger.Error(message);
         }
         public void LogInformation(string message)
         {
-            logger.LogInformation(message);
+            logger.Information(message);
         }
         public void LogWarning(string message)
         {
-            logger.LogWarning(message);
+            logger.Warning(message);
+            /*logger.Fa*/
         }
     }
 }

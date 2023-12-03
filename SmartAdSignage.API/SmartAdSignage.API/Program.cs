@@ -15,9 +15,9 @@ using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Implementations;
 using SmartAdSignage.Services.Services.Interfaces;
 using System.Text;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 builder.Services.AddControllers();
 //builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString));
@@ -28,7 +28,6 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 builder.Services.AddAuthorization();
-
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
@@ -45,6 +44,7 @@ builder.Services.AddTransient<IGenericRepository<Location>, GenericRepository<Lo
 builder.Services.AddTransient<IGenericRepository<IoTDevice>, GenericRepository<IoTDevice>>();
 builder.Services.AddTransient<IGenericRepository<CampaignAdvertisement>, GenericRepository<CampaignAdvertisement>>();
 builder.Services.AddTransient<IGenericRepository<Queue>, GenericRepository<Queue>>();
+/*builder.Services.AddTransient<IGenericRepository<AdCampaignPanel>, GenericRepository<AdCampaignPanel>>();*/
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
@@ -56,7 +56,7 @@ builder.Services.AddScoped<IIoTDeviceService, IoTDeviceService>();
 builder.Services.AddScoped<IAdCampaignService, AdCampaignService>();
 builder.Services.AddScoped<ICampaignAdService, CampaignAdService>();
 builder.Services.AddScoped<IQueueService, QueueService>();
-builder.Services.AddScoped<ILoggerService, LoggerService>();
+/*builder.Services.AddScoped<ILoggerService, LoggerService>();*/
 
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureJWT(builder.Configuration);
@@ -77,7 +77,7 @@ app.UseRouting();
 app.UseHttpsRedirection();
 
 app.UseCors("EnableCORS");
-app.ConfigureExceptionHandler(app.Services.CreateScope().ServiceProvider.GetRequiredService<ILoggerService>());
+app.ConfigureExceptionHandler(/*app.Services.CreateScope().ServiceProvider.GetRequiredService<ILoggerService>()*/);
 
 app.UseAuthentication();
 app.UseAuthorization();

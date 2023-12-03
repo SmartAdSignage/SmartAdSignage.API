@@ -45,6 +45,8 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<Location> UpdateLocationAsync(int id, Location location)
         {
             var existingLocation = await _unitOfWork.Locations.GetByIdAsync(id);
+            if (existingLocation == null)
+                return null;
             existingLocation.Street = location.Street;
             existingLocation.StreetType = location.StreetType;
             existingLocation.City = location.City;

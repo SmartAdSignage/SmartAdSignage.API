@@ -4,6 +4,7 @@ using SmartAdSignage.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,7 +32,7 @@ namespace SmartAdSignage.Repository.Data
 
         public DbSet<IoTDevice> IoTDevices { get; set; }
 
-        /*protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             builder.Entity<Advertisement>()
@@ -74,7 +75,7 @@ namespace SmartAdSignage.Repository.Data
                 .HasMany(u => u.AdCampaigns)
                 .WithOne(l => l.User)
                 .HasForeignKey(l => l.UserId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<User>()
                 .HasMany(u => u.Advertisements)
@@ -88,11 +89,38 @@ namespace SmartAdSignage.Repository.Data
                 .HasForeignKey(l => l.AdvertisementId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<AdCampaign>()
+            /*builder.Entity<AdCampaign>()
+                .HasMany(u => u.AdCampaignPanels)
+                .WithOne(l => l.AdCampaign)
+                .HasForeignKey(l => l.AdCampaignId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Panel>()
+                .HasMany(u => u.AdCampaignPanels)
+                .WithOne(l => l.Panel)
+                .HasForeignKey(l => l.PanelId)
+                .OnDelete(DeleteBehavior.Cascade);*/
+
+            /*builder.Entity<AdCampaign>()
+            .HasMany(opt => opt.Panels)
+            .WithMany(x => x.AdCampaigns)
+            .UsingEntity<Dictionary<string, object>>(
+                "AdCampaignPanels",
+                opt => opt.HasOne<AdCampaign>().WithMany().HasForeignKey("AccessActionId"),
+                opt => opt.HasOne<Panel>().WithMany().HasForeignKey("RoleId"),
+                opt =>
+                {
+                    opt.Property<int>("Id").UseIdentityColumn();
+                    opt.HasKey("Id");
+                    opt.ToTable("RoleAccessActions");
+                }
+            );*/
+
+            /*builder.Entity<AdCampaign>()
                 .HasMany(u => u.Panels)
                 .WithMany(l => l.AdCampaigns);
             
-            *//*builder.Entity<Advertisement>()
+            builder.Entity<Advertisement>()
                 .HasOne(u => u.User)
                 .WithMany(l => l.Advertisements)
                 .HasForeignKey(l => l.UserId)
@@ -144,17 +172,17 @@ namespace SmartAdSignage.Repository.Data
                 .HasOne(u => u.Panel)
                 .WithMany(l => l.IoTDevices)
                 .HasForeignKey(l => l.PanelId)
-                .OnDelete(DeleteBehavior.Cascade);*/
+                .OnDelete(DeleteBehavior.Cascade);
 
 
 
-            /*builder.Entity<User>().HasMany(u => u.Advertisements).WithOne(a => a.User).HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<User>().HasMany(u => u.Advertisements).WithOne(a => a.User).HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Cascade);
             builder.Entity<User>().HasMany(u => u.AdCampaigns).WithOne(a => a.User).HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Cascade);
             builder.Entity<AdCampaign>().HasMany(a => a.CampaignAdvertisements).WithOne(c => c.AdCampaign).HasForeignKey(c => c.AdCampaignId).OnDelete(DeleteBehavior.Cascade);
             builder.Entity<AdCampaign>().HasMany(a => a.Panels).WithOne(p => p.AdCampaign).HasForeignKey(p => p.AdCampaignId).OnDelete(DeleteBehavior.Cascade);
             builder.Entity<Advertisement>().HasMany(a => a.CampaignAdvertisements).WithOne(c => c.Advertisement).HasForeignKey(c => c.AdvertisementId).OnDelete(DeleteBehavior.Cascade);
             builder.Entity<Advertisement>().HasMany(a => a.Queues).WithOne(q => q.Advertisement).HasForeignKey(q => q.AdvertisementId).OnDelete(DeleteBehavior.Cascade);
-            builder.Entity<Panel>().HasMany(p => p.Queues).WithOne(q => q.Panel).HasForeignKey(q => q.PanelId).OnDelete(DeleteBehavior.Cascade);*//*
-        }*/
+            builder.Entity<Panel>().HasMany(p => p.Queues).WithOne(q => q.Panel).HasForeignKey(q => q.PanelId).OnDelete(DeleteBehavior.Cascade);*/
+        }
     }
 }

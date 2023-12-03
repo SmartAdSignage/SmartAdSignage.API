@@ -5,6 +5,7 @@ using SmartAdSignage.Repository.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,6 +56,27 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
         public async Task<TEntity> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
+        }
+
+        public async Task<IList<TEntity>> GetByConditionAsync(
+        Expression<Func<TEntity, bool>> predicate,
+        Expression<Func<TEntity, TEntity>> selector = null,
+        CancellationToken cancellationToken = default)
+        {
+            IQueryable<TEntity> query = _dbSet;
+
+            if (selector != null)
+            {
+                query = query
+                    .Where(predicate)
+                    .Select(selector);
+            }
+            else
+            {
+                query = query.Where(predicate);
+            }
+
+            return await query.ToListAsync(cancellationToken: cancellationToken);
         }
 
         public TEntity UpdateAsync(TEntity entity)
