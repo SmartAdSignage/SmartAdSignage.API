@@ -9,9 +9,9 @@ namespace SmartAdSignage.Core.Models
     public class Queue : BaseEntity
     {
         public int? PanelId { get; set; }
-        public Panel? Panel { get; set; }
+        public virtual Panel? Panel { get; set; }
         public int? AdvertisementId { get; set; }
-        public Advertisement? Advertisement { get; set; }
+        public virtual Advertisement? Advertisement { get; set; }
         public int? DisplayOrder { get; set; }
     }
 }

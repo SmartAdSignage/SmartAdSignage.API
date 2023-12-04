@@ -13,6 +13,6 @@ namespace SmartAdSignage.Core.Models
         public string? Street { get; set; }
         public string? StreetType { get; set; }
         public string? BuildingNumber { get; set; }
-        public ICollection<Panel>? Panels { get; set; }
+        public virtual ICollection<Panel>? Panels { get; set; }
     }
 }

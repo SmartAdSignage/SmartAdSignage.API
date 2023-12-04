@@ -1,4 +1,5 @@
-﻿using SmartAdSignage.Core.Models;
+﻿using SmartAdSignage.Core.Extra;
+using SmartAdSignage.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace SmartAdSignage.Services.Services.Interfaces
     {
         Task<Advertisement> CreateAdvertisementAsync(Advertisement advertisement);
 
-        Task<IEnumerable<Advertisement>> GetAllAdvertisements();
+        Task<IEnumerable<Advertisement>> GetAllAdvertisements(PageInfo pageInfo);
 
         Task<Advertisement> GetAdvertisementByIdAsync(int id);
 

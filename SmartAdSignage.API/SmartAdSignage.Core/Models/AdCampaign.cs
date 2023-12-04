@@ -18,10 +18,10 @@ namespace SmartAdSignage.Core.Models
 
         public string? UserId { get; set; }
 
-        public User? User { get; set; }
+        public virtual User? User { get; set; }
 
-        public ICollection<CampaignAdvertisement>? CampaignAdvertisements { get; set; }
+        public virtual ICollection<CampaignAdvertisement>? CampaignAdvertisements { get; set; }
 
-        public ICollection<Panel>? Panels { get; set; }
+        public virtual ICollection<Panel>? Panels { get; set; }
     }
 }

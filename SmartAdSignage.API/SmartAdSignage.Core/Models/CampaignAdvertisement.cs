@@ -13,8 +13,8 @@ namespace SmartAdSignage.Core.Models
         public int DisplayedTimes { get; set; }
 
         public int? AdCampaignId { get; set; }
-        public AdCampaign AdCampaign { get; set; }
+        public virtual AdCampaign AdCampaign { get; set; }
         public int? AdvertisementId { get; set; }
-        public Advertisement Advertisement { get; set; }
+        public virtual Advertisement Advertisement { get; set; }
     }
 }

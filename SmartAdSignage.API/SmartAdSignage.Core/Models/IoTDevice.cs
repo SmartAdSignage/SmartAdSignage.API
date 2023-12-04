@@ -14,6 +14,6 @@ namespace SmartAdSignage.Core.Models
 
         public int? PanelId { get; set; }
 
-        public Panel? Panel { get; set; }
+        public virtual Panel? Panel { get; set; }
     }
 }

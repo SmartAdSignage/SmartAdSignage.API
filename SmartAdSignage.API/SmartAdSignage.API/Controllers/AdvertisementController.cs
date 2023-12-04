@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SmartAdSignage.Core.DTOs.Advertisement.Requests;
 using SmartAdSignage.Core.DTOs.Advertisement.Responses;
+using SmartAdSignage.Core.DTOs.Common;
 using SmartAdSignage.Core.Models;
 using SmartAdSignage.Services.Services.Interfaces;
 
@@ -16,9 +17,9 @@ namespace SmartAdSignage.API.Controllers
 
         [HttpGet]
         [Route("advertisements")]
-        public async Task<IActionResult> GetAdvertisements()
+        public async Task<IActionResult> GetAdvertisements([FromQuery] GetRequest getRequest)
         {
-            var result = await _advertisementService.GetAllAdvertisements();
+            var result = await _advertisementService.GetAllAdvertisements(getRequest.PangeInfo);
             if (result.Count() == 0)
                 return NotFound();
             var advertisements = _mapper.Map<IEnumerable<AdvertisementResponse>>(result);

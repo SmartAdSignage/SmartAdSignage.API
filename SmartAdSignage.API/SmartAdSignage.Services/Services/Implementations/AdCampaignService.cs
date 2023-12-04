@@ -1,4 +1,5 @@
-﻿using SmartAdSignage.Core.Models;
+﻿using SmartAdSignage.Core.Extra;
+using SmartAdSignage.Core.Models;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
 using System;
@@ -18,7 +19,7 @@ namespace SmartAdSignage.Services.Services.Implementations
         }
         public async Task<AdCampaign> CreateAdCampaignAsync(AdCampaign adCampaign)
         {
-            if (!ValidateAdCampaign(adCampaign)) 
+            if (!ValidateAdCampaignDates(adCampaign)) 
                 return null;
             var result = await _unitOfWork.AdCampaigns.AddAsync(adCampaign);
             await _unitOfWork.AdCampaigns.Commit();
@@ -35,12 +36,15 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<AdCampaign> GetAdCampaignByIdAsync(int id)
         {
-            return await _unitOfWork.AdCampaigns.GetByIdAsync(id);
+            var result = await _unitOfWork.AdCampaigns.GetByConditionAsync( x => x.Id == id, EntitySelector.AdCampaignSelector);
+            /*result.CampaignAdvertisements = await _unitOfWork.CampaignAdvertisements.GetByConditionAsync(x => x.AdCampaignId == id);
+            result.Panels = await _unitOfWork.Panels.GetAllAsync().Resu;*/
+            return result.FirstOrDefault();
         }
 
-        public async Task<IEnumerable<AdCampaign>> GetAllAdCampaignsAsync()
+        public async Task<IEnumerable<AdCampaign>> GetAllAdCampaignsAsync(PageInfo pageInfo)
         {
-            return await _unitOfWork.AdCampaigns.GetAllAsync();
+            return await _unitOfWork.AdCampaigns.GetPageWithMultiplePredicatesAsync(null, pageInfo, EntitySelector.AdCampaignSelector);
         }
 
         public async Task<AdCampaign> UpdateAdCampaignAsync(int id, AdCampaign adCampaign)
@@ -48,9 +52,9 @@ namespace SmartAdSignage.Services.Services.Implementations
             var existingAdCampaign = await _unitOfWork.AdCampaigns.GetByIdAsync(id);
             if (existingAdCampaign == null)
                 return null;
-            if (!ValidateAdCampaign(adCampaign))
+            if (!ValidateAdCampaignDates(adCampaign))
                 return null;
-            //existingAdCampaign.Status = adCampaign.Status;
+            existingAdCampaign.Status = adCampaign.Status;
             existingAdCampaign.EndDate = adCampaign.EndDate;
             existingAdCampaign.TargetedViews = adCampaign.TargetedViews;
             existingAdCampaign.UserId = adCampaign.UserId;
@@ -64,20 +68,29 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<IEnumerable<AdCampaign>> GetFinishedAdCampaigns(string userId)
         {
             var adCampaigns = await _unitOfWork.AdCampaigns.GetByConditionAsync(x => x.UserId == userId && x.EndDate <= DateTime.Now);
+            foreach (var adCampaign in adCampaigns)
+            {
+                if (adCampaign.Status != "Finished") 
+                {
+                    adCampaign.Status = "Finished";
+                    _unitOfWork.AdCampaigns.UpdateAsync(adCampaign);
+                    await _unitOfWork.AdCampaigns.Commit();
+                }
+            }
             return adCampaigns;
         }
 
         public async Task<int[]> GetStatistics(AdCampaign adCampaign) 
         {
-            var views = (await _unitOfWork.CampaignAdvertisements.GetByConditionAsync(x => x.AdCampaignId == adCampaign.Id)).Sum(i => i.Views);
-            var overallDisplays = (await _unitOfWork.CampaignAdvertisements.GetByConditionAsync(x => x.AdCampaignId == adCampaign.Id)).Sum(i => i.DisplayedTimes);
-            var advertsDisplayed = (await _unitOfWork.CampaignAdvertisements.GetByConditionAsync(x => x.AdCampaignId == adCampaign.Id)).Count();
-            /*if (adCampaign.Status != "Finished")
-                adCampaign.Status = "Finished";*/
+            var views = adCampaign.CampaignAdvertisements.Sum(x => x.Views);
+            var overallDisplays = adCampaign.CampaignAdvertisements.Sum(x => x.DisplayedTimes); 
+            var advertsDisplayed = adCampaign.CampaignAdvertisements.Count(); 
+            if (adCampaign.Status != "Finished")
+                adCampaign.Status = "Finished";
             return new int[] { views, overallDisplays, advertsDisplayed };
         }
 
-        private bool ValidateAdCampaign(AdCampaign adCampaign) 
+        private bool ValidateAdCampaignDates(AdCampaign adCampaign) 
         {
             if (!CheckDates(adCampaign))
                 return false;

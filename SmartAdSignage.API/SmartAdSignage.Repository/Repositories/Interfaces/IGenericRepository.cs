@@ -1,4 +1,5 @@
-﻿using SmartAdSignage.Core.Models;
+﻿using SmartAdSignage.Core.Extra;
+using SmartAdSignage.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,12 @@ namespace SmartAdSignage.Repository.Repositories.Interfaces
         Task<IList<TEntity>> GetByConditionAsync(
         Expression<Func<TEntity, bool>> predicate,
         Expression<Func<TEntity, TEntity>> selector = null,
+        CancellationToken cancellationToken = default);
+
+        Task<IList<TEntity>> GetPageWithMultiplePredicatesAsync(
+        IEnumerable<Expression<Func<TEntity, bool>>> predicates,
+        PageInfo pageInfo,
+        Expression<Func<TEntity, TEntity>> selector,
         CancellationToken cancellationToken = default);
 
         Task Commit();

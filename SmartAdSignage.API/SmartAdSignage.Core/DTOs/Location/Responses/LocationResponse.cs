@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SmartAdSignage.Core.DTOs.Panel.Responses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +15,6 @@ namespace SmartAdSignage.Core.DTOs.Location.Responses
         public string? Street { get; set; }
         public string? StreetType { get; set; }
         public string? BuildingNumber { get; set; }
+        public ICollection<PanelResponse>? Panels { get; set; }
     }
 }

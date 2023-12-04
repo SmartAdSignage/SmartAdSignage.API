@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SmartAdSignage.Core.DTOs.AdCampaign.Reponses;
 using SmartAdSignage.Core.DTOs.AdCampaign.Requests;
 using SmartAdSignage.Core.DTOs.Advertisement.Responses;
+using SmartAdSignage.Core.DTOs.Common;
 using SmartAdSignage.Core.Models;
 using SmartAdSignage.Services.Services.Implementations;
 using SmartAdSignage.Services.Services.Interfaces;
@@ -19,9 +20,9 @@ namespace SmartAdSignage.API.Controllers
 
         [HttpGet]
         [Route("ad-campaigns")]
-        public async Task<IActionResult> GetAdCampaigns()
+        public async Task<IActionResult> GetAdCampaigns([FromQuery] GetRequest adCampaignsRequest)
         {
-            var result = await _adCampaignService.GetAllAdCampaignsAsync();
+            var result = await _adCampaignService.GetAllAdCampaignsAsync(adCampaignsRequest.PangeInfo);
             if (result.Count() == 0)
                 return NotFound();
             var adCampaigns = _mapper.Map<IEnumerable<AdCampaignResponse>>(result);
@@ -32,6 +33,7 @@ namespace SmartAdSignage.API.Controllers
         [Route("ad-campaign/{id}")]
         public async Task<IActionResult> GetAdCampaign(int id)
         {
+            /*var userId = User.Claims.FirstOrDefault()?.Value;*/
             var result = await _adCampaignService.GetAdCampaignByIdAsync(id);
             if (result == null)
                 return NotFound();

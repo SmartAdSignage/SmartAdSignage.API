@@ -14,11 +14,11 @@ namespace SmartAdSignage.Core.Models
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
         public int? LocationId { get; set; }
-        public Location? Location { get; set; }
+        public virtual Location? Location { get; set; }
         public string? UserId { get; set; }
-        public User? User { get; set; }
-        public ICollection<AdCampaign>? AdCampaigns { get; set; }
-        public ICollection<IoTDevice>? IoTDevices { get; set; }
-        public ICollection<Queue>? Queues { get; set; }
+        public virtual User? User { get; set; }
+        public virtual ICollection<AdCampaign>? AdCampaigns { get; set; }
+        public virtual ICollection<IoTDevice>? IoTDevices { get; set; }
+        public virtual ICollection<Queue>? Queues { get; set; }
     }
 }

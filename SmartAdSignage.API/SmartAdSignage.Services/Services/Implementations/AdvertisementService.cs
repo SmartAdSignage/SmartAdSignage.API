@@ -1,4 +1,5 @@
-﻿using SmartAdSignage.Core.Models;
+﻿using SmartAdSignage.Core.Extra;
+using SmartAdSignage.Core.Models;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
 using System;
@@ -32,14 +33,15 @@ namespace SmartAdSignage.Services.Services.Implementations
             return result;
         }
 
-        public Task<Advertisement> GetAdvertisementByIdAsync(int id)
+        public async Task<Advertisement> GetAdvertisementByIdAsync(int id)
         {
-            return _unitOfWork.Advertisements.GetByIdAsync(id);
+            var result = await _unitOfWork.Advertisements.GetByConditionAsync(x => x.Id == id, EntitySelector.AdvertisementSelector);
+            return result.FirstOrDefault();
         }
 
-        public async Task<IEnumerable<Advertisement>> GetAllAdvertisements()
+        public async Task<IEnumerable<Advertisement>> GetAllAdvertisements(PageInfo pageInfo)
         {
-            return await _unitOfWork.Advertisements.GetAllAsync();
+            return await _unitOfWork.Advertisements.GetPageWithMultiplePredicatesAsync(null, pageInfo, EntitySelector.AdvertisementSelector);
         }
 
         public async Task<Advertisement> UpdateAdvertisementAsync(int id, Advertisement advertisement)

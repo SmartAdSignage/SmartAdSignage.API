@@ -14,10 +14,10 @@ namespace SmartAdSignage.Core.Models
 
         public DateTime? RegistrationDate { get; set; } = DateTime.Now;
 
-        public ICollection<Advertisement> Advertisements { get; set; }
+        public virtual ICollection<Advertisement> Advertisements { get; set; }
 
-        public ICollection<AdCampaign> AdCampaigns { get; set; }
+        public virtual ICollection<AdCampaign> AdCampaigns { get; set; }
 
-        public ICollection<Panel> Panels { get; set; }
+        public virtual ICollection<Panel> Panels { get; set; }
     }
 }

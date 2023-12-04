@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SmartAdSignage.Core.DTOs.AdCampaign.Reponses;
+using SmartAdSignage.Core.DTOs.Advertisement.Responses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,8 +15,8 @@ namespace SmartAdSignage.Core.DTOs.CampaignAdvertisement.Responses
 
         public int DisplayedTimes { get; set; }
 
-        public int? AdCampaignId { get; set; }
+        public AdCampaignResponse AdCampaign { get; set; }
 
-        public int? AdvertisementId { get; set; }
+        public AdvertisementResponse Advertisement { get; set; }
     }
 }

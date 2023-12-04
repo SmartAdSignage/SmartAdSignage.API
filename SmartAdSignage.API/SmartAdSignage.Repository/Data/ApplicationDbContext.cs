@@ -14,6 +14,7 @@ namespace SmartAdSignage.Repository.Data
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
+            ChangeTracker.LazyLoadingEnabled = true;
         }
 
         public DbSet<User> Users { get; set; }
@@ -32,6 +33,11 @@ namespace SmartAdSignage.Repository.Data
 
         public DbSet<IoTDevice> IoTDevices { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder dbContextOptionsBuilder)
+        {
+            dbContextOptionsBuilder.UseLazyLoadingProxies();
+            //base.ConfigureConventions(configurationBuilder);
+        }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

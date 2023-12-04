@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SmartAdSignage.Core.DTOs.Panel.Responses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,6 @@ namespace SmartAdSignage.Core.DTOs.IoTDevice.Responses
 
         public string? Status { get; set; }
 
-        public int? PanelId { get; set; }
+        public PanelResponse? Panel { get; set; }
     }
 }

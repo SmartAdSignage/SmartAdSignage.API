@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SmartAdSignage.Core.Extra;
 using SmartAdSignage.Core.Models;
 using SmartAdSignage.Repository.Data;
 using SmartAdSignage.Repository.Repositories.Interfaces;
@@ -25,6 +26,7 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
         {
             try 
             {
+                /*var result = _dbSet.Add(entity).Entity;*/
                 var result = (await _dbSet.AddAsync(entity)).Entity;
                 return result;
             }
@@ -56,6 +58,37 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
         public async Task<TEntity> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
+        }
+
+        public async Task<IList<TEntity>> GetPageWithMultiplePredicatesAsync(
+        IEnumerable<Expression<Func<TEntity, bool>>> predicates,
+        PageInfo pageInfo,
+        Expression<Func<TEntity, TEntity>> selector,
+        CancellationToken cancellationToken = default)
+        {
+            var skip = pageInfo.Size * (pageInfo.Number - 1);
+
+            IQueryable<TEntity> query = _dbSet.AsQueryable();
+
+            if (selector != null)
+            {
+                query = query.Select(selector);
+            }
+
+            if (predicates == null || predicates.Count() == 0)
+            {
+                query = query.Skip(skip).Take(pageInfo.Size);
+            }
+            else
+            {
+                foreach (var predicate in predicates)
+                {
+                    query = query.Where(predicate).Skip(skip).Take(pageInfo.Size);
+                }
+            }
+
+            var entities = await query.ToListAsync(cancellationToken: cancellationToken);
+            return entities;
         }
 
         public async Task<IList<TEntity>> GetByConditionAsync(
