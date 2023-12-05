@@ -1,4 +1,6 @@
-﻿using SmartAdSignage.Core.Models;
+﻿using Azure;
+using SmartAdSignage.Core.Extra;
+using SmartAdSignage.Core.Models;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
 using System;
@@ -32,14 +34,15 @@ namespace SmartAdSignage.Services.Services.Implementations
             return result;
         }
 
-        public async Task<IEnumerable<Queue>> GetAllQueuesAsync()
+        public async Task<IEnumerable<Queue>> GetAllQueuesAsync(PageInfo pageInfo)
         {
-            return await _unitOfWork.Queues.GetAllAsync();
+            return await _unitOfWork.Queues.GetPageWithMultiplePredicatesAsync(null, pageInfo, EntitySelector.QueueSelector);
         }
 
         public async Task<Queue> GetQueueByIdAsync(int id)
         {
-            return await _unitOfWork.Queues.GetByIdAsync(id);
+            var result = await _unitOfWork.Queues.GetByConditionAsync(x => x.Id == id);
+            return result.FirstOrDefault();
         }
 
         public async Task<Queue> UpdateQueueAsync(int id, Queue queue)

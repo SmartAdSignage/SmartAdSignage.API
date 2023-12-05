@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SmartAdSignage.Core.DTOs.Common;
 using SmartAdSignage.Core.DTOs.Location.Requests;
 using SmartAdSignage.Core.DTOs.Location.Responses;
+using SmartAdSignage.Core.Extra;
 using SmartAdSignage.Core.Models;
 using SmartAdSignage.Services.Services.Interfaces;
 
@@ -10,16 +12,22 @@ namespace SmartAdSignage.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LocationController(IMapper mapper, ILocationService locationService) : ControllerBase
+    public class LocationController : ControllerBase
     {
-        private readonly IMapper _mapper = mapper;
-        private readonly ILocationService _locationService = locationService;
+        private readonly IMapper _mapper;
+        private readonly ILocationService _locationService;
+
+        public LocationController(IMapper mapper, ILocationService locationService)
+        {
+            _mapper = mapper;
+            _locationService = locationService;
+        }
         
         [HttpGet]
         [Route("locations")]
-        public async Task<IActionResult> GetLocations()
+        public async Task<IActionResult> GetLocations([FromQuery] GetRequest getRequest)
         {
-            var result = await _locationService.GetAllLocationsAsync();
+            var result = await _locationService.GetAllLocationsAsync(getRequest.PageInfo);
             if (result.Count() == 0)
                 return NotFound();
             var locations = _mapper.Map<List<LocationResponse>>(result);

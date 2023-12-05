@@ -1,0 +1,18 @@
+version: '3.4'
+
+name: smart-ad-signage
+
+services:
+  smart-ad-signage.api:
+    container_name: smart-ad-signage.api
+    image: ${DOCKER_REGISTRY-}smart-ad-signage.api
+    build:
+      context: .
+      dockerfile: SmartAdSignage.API/Dockerfile
+  
+  smart-ad-signage.db:
+    container_name: smart-ad-signage.db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+
+volumes:
+  db_data:

@@ -111,7 +111,7 @@ namespace SmartAdSignage.Repository
         {
             var userId = _userManager.Users.First().Id;
             var location = await _unitOfWork.Locations.GetAllAsync();
-            if (location.Count() == 0)
+            if (!location.Any())
             {
                 //var newLocations = new List<Location>();
                 var newLocations = (new Faker<Location>()
@@ -126,7 +126,7 @@ namespace SmartAdSignage.Repository
                 await _context.SaveChangesAsync();
             }   
             var panels = await _unitOfWork.Panels.GetAllAsync();
-            if (panels.Count() == 0) 
+            if (!panels.Any()) 
             {
                 //var newPanels = new List<Panel>();
                 var locationId = (await _unitOfWork.Locations.GetAllAsync()).First().Id;
@@ -144,7 +144,7 @@ namespace SmartAdSignage.Repository
                 await _context.SaveChangesAsync();
             }
             var iotDevices = await _unitOfWork.IoTDevices.GetAllAsync();
-            if (iotDevices.Count() == 0)
+            if (!iotDevices.Any())
             {
                 var panelId = (await _unitOfWork.Panels.GetAllAsync()).First().Id;
                 var newIoTDevices = new Faker<IoTDevice>()
@@ -156,20 +156,21 @@ namespace SmartAdSignage.Repository
                 await _context.SaveChangesAsync();
             }
             var advertisements = await _unitOfWork.Advertisements.GetAllAsync();
-            if (advertisements.Count() == 0)
+            if (!advertisements.Any())
             {
-
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "Images", "Food.png");
+                var file = File.ReadAllBytes(path);
                 var newAdvertisements = new Faker<Advertisement>()
                     .RuleFor(a => a.Title, f => f.Random.String2(10))
                     .RuleFor(a => a.Type, f => f.Random.String2(10))
-                    .RuleFor(a => a.File, File.ReadAllBytes("C:\\Users\\Admin\\OneDrive\\Рабочий стол\\Скріни\\Wow.jpg"))
+                    .RuleFor(a => a.File, file)
                     .RuleFor(a => a.UserId, userId)
                     .Generate(5).ToList();
                 await _unitOfWork.Advertisements.AddManyAsync(newAdvertisements);
                 await _context.SaveChangesAsync();
             }
             var queues = await _unitOfWork.Queues.GetAllAsync();
-            if (queues.Count() == 0)
+            if (!queues.Any())
             {
                 var panelId = (await _unitOfWork.Panels.GetAllAsync()).First().Id;
                 var advertisementId = (await _unitOfWork.Advertisements.GetAllAsync()).First().Id;
@@ -182,7 +183,7 @@ namespace SmartAdSignage.Repository
                 await _context.SaveChangesAsync();
             }
             var adCampaigns = await _unitOfWork.AdCampaigns.GetAllAsync();
-            if (adCampaigns.Count() == 0)
+            if (!adCampaigns.Any())
             {
                 panels = await _unitOfWork.Panels.GetAllAsync();
                 var newAdCampaigns = new Faker<AdCampaign>()
@@ -197,7 +198,7 @@ namespace SmartAdSignage.Repository
                 await _context.SaveChangesAsync();
             }
             var camapaignAdvertisements = await _unitOfWork.CampaignAdvertisements.GetAllAsync();
-            if (camapaignAdvertisements.Count() == 0)
+            if (!camapaignAdvertisements.Any())
             {
                 var adCampaignId = (await _unitOfWork.AdCampaigns.GetAllAsync()).First().Id;
                 var advertisementId = (await _unitOfWork.Advertisements.GetAllAsync()).First().Id;

@@ -9,6 +9,6 @@ namespace SmartAdSignage.Core.DTOs.Common
 {
     public class GetRequest
     {
-        public PageInfo PangeInfo { get; set; }
+        public PageInfo PageInfo { get; set; }
     }
 }

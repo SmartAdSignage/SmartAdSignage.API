@@ -1,4 +1,5 @@
-﻿using SmartAdSignage.Core.Models;
+﻿using SmartAdSignage.Core.Extra;
+using SmartAdSignage.Core.Models;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
 using System;
@@ -32,14 +33,15 @@ namespace SmartAdSignage.Services.Services.Implementations
             return result;
         }
 
-        public async Task<IEnumerable<IoTDevice>> GetAllIoTDevicesAsync()
+        public async Task<IEnumerable<IoTDevice>> GetAllIoTDevicesAsync(PageInfo pageInfo)
         {
-            return await _unitOfWork.IoTDevices.GetAllAsync();
+            return await _unitOfWork.IoTDevices.GetPageWithMultiplePredicatesAsync(null, pageInfo, EntitySelector.IoTDeviceSelector);
         }
 
-        public Task<IoTDevice> GetIoTDeviceByIdAsync(int id)
+        public async Task<IoTDevice> GetIoTDeviceByIdAsync(int id)
         {
-            return _unitOfWork.IoTDevices.GetByIdAsync(id);
+            var result = await _unitOfWork.IoTDevices.GetByConditionAsync(x => x.Id == id, EntitySelector.IoTDeviceSelector);
+            return result.FirstOrDefault();
         }
 
         public async Task<IoTDevice> UpdateIoTDeviceAsync(int id, IoTDevice ioTDevice)

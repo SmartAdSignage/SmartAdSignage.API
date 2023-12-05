@@ -1,4 +1,5 @@
-﻿using SmartAdSignage.Core.Models;
+﻿using SmartAdSignage.Core.Extra;
+using SmartAdSignage.Core.Models;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
 using System;
@@ -32,14 +33,15 @@ namespace SmartAdSignage.Services.Services.Implementations
             return result;
         }
 
-        public async Task<IEnumerable<Location>> GetAllLocationsAsync()
+        public async Task<IEnumerable<Location>> GetAllLocationsAsync(PageInfo pageInfo)
         {
-            return await _unitOfWork.Locations.GetAllAsync();
+            return await _unitOfWork.Locations.GetPageWithMultiplePredicatesAsync(null, pageInfo, EntitySelector.LocationSelector);
         }
 
-        public Task<Location> GetLocationByIdAsync(int id)
+        public async Task<Location> GetLocationByIdAsync(int id)
         {
-            return _unitOfWork.Locations.GetByIdAsync(id);
+            var result = await _unitOfWork.Locations.GetByConditionAsync(x => x.Id == id);
+            return result.FirstOrDefault();
         }
 
         public async Task<Location> UpdateLocationAsync(int id, Location location)

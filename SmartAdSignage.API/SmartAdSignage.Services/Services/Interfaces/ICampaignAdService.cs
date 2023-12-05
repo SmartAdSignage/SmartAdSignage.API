@@ -1,4 +1,5 @@
-﻿using SmartAdSignage.Core.Models;
+﻿using SmartAdSignage.Core.Extra;
+using SmartAdSignage.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace SmartAdSignage.Services.Services.Interfaces
     {
         Task<CampaignAdvertisement> CreateCampaignAdvertisementAsync(CampaignAdvertisement campaignAdvertisement);
         Task<CampaignAdvertisement> UpdateCampaignAdvertisementAsync(int id, CampaignAdvertisement campaignAdvertisement);
-        Task<IEnumerable<CampaignAdvertisement>> GetAllCampaignAdvertisementsAsync();
+        Task<IEnumerable<CampaignAdvertisement>> GetAllCampaignAdvertisementsAsync(PageInfo pageInfo);
         Task<CampaignAdvertisement> GetCampaignAdvertisementByIdAsync(int id);
         Task<bool> DeleteCampaignAdvertisementByIdAsync(int id);
     }

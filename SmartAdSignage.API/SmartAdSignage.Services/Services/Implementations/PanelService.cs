@@ -1,4 +1,5 @@
-﻿using SmartAdSignage.Core.Models;
+﻿using SmartAdSignage.Core.Extra;
+using SmartAdSignage.Core.Models;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
 using System;
@@ -32,14 +33,15 @@ namespace SmartAdSignage.Services.Services.Implementations
             return result;
         }
 
-        public async Task<IEnumerable<Panel>> GetAllPanelsAsync()
+        public async Task<IEnumerable<Panel>> GetAllPanelsAsync(PageInfo pageInfo)
         {
-            return await _unitOfWork.Panels.GetAllAsync();
+            return await _unitOfWork.Panels.GetPageWithMultiplePredicatesAsync(null, pageInfo, EntitySelector.PanelSelector);
         }
 
         public async Task<Panel> GetPanelByIdAsync(int id)
         {
-            return await _unitOfWork.Panels.GetByIdAsync(id);
+            var result = await _unitOfWork.Panels.GetByConditionAsync(x => x.Id == id);
+            return result.FirstOrDefault();
         }
 
         public async Task<Panel> UpdatePanelAsync(int id, Panel panel)

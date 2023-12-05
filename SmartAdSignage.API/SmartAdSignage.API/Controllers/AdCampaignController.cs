@@ -13,16 +13,22 @@ namespace SmartAdSignage.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdCampaignController(IMapper mapper, IAdCampaignService adCampaignService) : ControllerBase
+    public class AdCampaignController : ControllerBase
     {
-        private readonly IMapper _mapper = mapper;
-        private readonly IAdCampaignService _adCampaignService = adCampaignService;
+        private readonly IMapper _mapper;
+        private readonly IAdCampaignService _adCampaignService;
+
+        public AdCampaignController(IMapper mapper, IAdCampaignService adCampaignService) 
+        {
+            _mapper = mapper;
+            _adCampaignService = adCampaignService;
+        }
 
         [HttpGet]
         [Route("ad-campaigns")]
         public async Task<IActionResult> GetAdCampaigns([FromQuery] GetRequest adCampaignsRequest)
         {
-            var result = await _adCampaignService.GetAllAdCampaignsAsync(adCampaignsRequest.PangeInfo);
+            var result = await _adCampaignService.GetAllAdCampaignsAsync(adCampaignsRequest.PageInfo);
             if (result.Count() == 0)
                 return NotFound();
             var adCampaigns = _mapper.Map<IEnumerable<AdCampaignResponse>>(result);

@@ -19,4 +19,7 @@ RUN dotnet publish "SmartAdSignage.API.csproj" -c Release -o /app/publish /p:Use
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+COPY ["SmartAdSignage.Repository/Images", "/app/Images"]
+
 ENTRYPOINT ["dotnet", "SmartAdSignage.API.dll"]

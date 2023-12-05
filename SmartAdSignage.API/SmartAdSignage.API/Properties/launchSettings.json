@@ -1,13 +1,13 @@
 {
   "profiles": {
-    "http": {
+    "SmartAdSignage.API": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "dotnetRunMessages": true,
+      "dotnetRunMessages": false,
       "applicationUrl": "http://localhost:5000"
     },
     "https": {

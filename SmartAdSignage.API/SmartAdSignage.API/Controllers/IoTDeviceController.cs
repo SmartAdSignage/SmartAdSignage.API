@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using SmartAdSignage.Core.DTOs.Common;
 using SmartAdSignage.Core.DTOs.IoTDevice.Requests;
 using SmartAdSignage.Core.DTOs.IoTDevice.Responses;
 using SmartAdSignage.Core.Models;
@@ -9,16 +10,22 @@ namespace SmartAdSignage.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class IoTDeviceController(IMapper mapper, IIoTDeviceService ioTDeviceService) : ControllerBase
+    public class IoTDeviceController : ControllerBase
     {
-        private readonly IMapper _mapper = mapper;
-        private readonly IIoTDeviceService _ioTDeviceService = ioTDeviceService;
+        private readonly IMapper _mapper;
+        private readonly IIoTDeviceService _ioTDeviceService;
+
+        public IoTDeviceController(IMapper mapper, IIoTDeviceService ioTDeviceService)
+        {
+            _mapper = mapper;
+            _ioTDeviceService = ioTDeviceService;
+        }
         
         [HttpGet]
         [Route("IoTDevices")]
-        public async Task<IActionResult> GetIoTDevices()
+        public async Task<IActionResult> GetIoTDevices([FromQuery] GetRequest getRequest)
         {
-            var result = await _ioTDeviceService.GetAllIoTDevicesAsync();
+            var result = await _ioTDeviceService.GetAllIoTDevicesAsync(getRequest.PageInfo);
             if (result.Count() == 0)
                 return NotFound();
             var IoTDevices = _mapper.Map<IEnumerable<IoTDeviceResponse>>(result);

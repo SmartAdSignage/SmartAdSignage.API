@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SmartAdSignage.Core.DTOs.Common;
 using SmartAdSignage.Core.DTOs.Panel.Responses;
 using SmartAdSignage.Core.DTOs.Queue.Requests;
 using SmartAdSignage.Core.DTOs.Queue.Responses;
@@ -12,16 +13,22 @@ namespace SmartAdSignage.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class QueueController(IMapper mapper, IQueueService queueService) : ControllerBase
+    public class QueueController : ControllerBase
     {
-        private readonly IMapper _mapper = mapper;
-        private readonly IQueueService _queueService = queueService;
+        private readonly IMapper _mapper;
+        private readonly IQueueService _queueService;
+
+        public QueueController(IMapper mapper, IQueueService queueService)
+        {
+            _mapper = mapper;
+            _queueService = queueService;
+        }
 
         [HttpGet]
         [Route("queues")]
-        public async Task<IActionResult> GetQueues()
+        public async Task<IActionResult> GetQueues([FromQuery] GetRequest getRequest)
         {
-            var result = await _queueService.GetAllQueuesAsync();
+            var result = await _queueService.GetAllQueuesAsync(getRequest.PageInfo);
             if (result.Count() == 0)
                 return NotFound();
             var panels = _mapper.Map<IEnumerable<QueueResponse>>(result);

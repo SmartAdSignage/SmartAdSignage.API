@@ -1,4 +1,5 @@
-﻿using SmartAdSignage.Core.Models;
+﻿using SmartAdSignage.Core.Extra;
+using SmartAdSignage.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,6 @@ namespace SmartAdSignage.Services.Services.Interfaces
         Task<Panel> UpdatePanelAsync(int id, Panel panel);
         Task<bool> DeletePanelByIdAsync(int id);
         Task<Panel> GetPanelByIdAsync(int id);
-        Task<IEnumerable<Panel>> GetAllPanelsAsync();
+        Task<IEnumerable<Panel>> GetAllPanelsAsync(PageInfo pageInfo);
     }
 }

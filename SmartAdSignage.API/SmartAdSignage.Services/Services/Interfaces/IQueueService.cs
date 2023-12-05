@@ -1,4 +1,5 @@
-﻿using SmartAdSignage.Core.Models;
+﻿using SmartAdSignage.Core.Extra;
+using SmartAdSignage.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,6 @@ namespace SmartAdSignage.Services.Services.Interfaces
         Task<Queue> UpdateQueueAsync(int id, Queue queue);
         Task<bool> DeleteQueueByIdAsync(int id);
         Task<Queue> GetQueueByIdAsync(int id);
-        Task<IEnumerable<Queue>> GetAllQueuesAsync();
+        Task<IEnumerable<Queue>> GetAllQueuesAsync(PageInfo pageInfo);
     }
 }

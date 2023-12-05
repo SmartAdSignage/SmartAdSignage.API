@@ -17,10 +17,16 @@ namespace SmartAdSignage.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(IMapper mapper, IUserService usersService) : ControllerBase
+    public class AuthController : ControllerBase
     {
-        private readonly IMapper _mapper = mapper;
-        private readonly IUserService _usersService = usersService;
+        private readonly IMapper _mapper;
+        private readonly IUserService _usersService;
+
+        public AuthController(IMapper mapper, IUserService usersService)
+        {
+            _mapper = mapper;
+            _usersService = usersService;
+        }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)

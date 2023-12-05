@@ -1,0 +1,25 @@
+version: '3.4'
+
+services:
+  smart-ad-signage.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings:DefaultConnection=Server=smart-ad-signage.db;Database=SmartAdSignage;User Id=sa;Password=Pass123$;Encrypt=false
+    restart: always
+    ports:
+      - "5001:80"
+    depends_on:
+      - smart-ad-signage.db
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  
+  smart-ad-signage.db:
+    environment:
+        SA_PASSWORD: "Pass123$"
+        ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+        - "1433:1433"
+    volumes:
+      - db_data:/var/opt/mssql

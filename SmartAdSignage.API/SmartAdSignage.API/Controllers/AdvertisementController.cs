@@ -10,16 +10,22 @@ namespace SmartAdSignage.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdvertisementController(IMapper mapper, IAdvertisementService advertisementService) : ControllerBase
+    public class AdvertisementController : ControllerBase
     {
-        private readonly IMapper _mapper = mapper;
-        private readonly IAdvertisementService _advertisementService = advertisementService;
+        private readonly IMapper _mapper;
+        private readonly IAdvertisementService _advertisementService;
+
+        public AdvertisementController(IMapper mapper, IAdvertisementService advertisementService)
+        {
+            _mapper = mapper;
+            _advertisementService = advertisementService;
+        }
 
         [HttpGet]
         [Route("advertisements")]
         public async Task<IActionResult> GetAdvertisements([FromQuery] GetRequest getRequest)
         {
-            var result = await _advertisementService.GetAllAdvertisements(getRequest.PangeInfo);
+            var result = await _advertisementService.GetAllAdvertisements(getRequest.PageInfo);
             if (result.Count() == 0)
                 return NotFound();
             var advertisements = _mapper.Map<IEnumerable<AdvertisementResponse>>(result);

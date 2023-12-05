@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SmartAdSignage.Core.DTOs.CampaignAdvertisement.Requests;
 using SmartAdSignage.Core.DTOs.CampaignAdvertisement.Responses;
+using SmartAdSignage.Core.DTOs.Common;
 using SmartAdSignage.Core.Models;
 using SmartAdSignage.Services.Services.Interfaces;
 
@@ -10,16 +11,22 @@ namespace SmartAdSignage.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CampaignAdController(IMapper mapper, ICampaignAdService campaignAdvertisementService) : ControllerBase
+    public class CampaignAdController : ControllerBase
     {
-        private readonly IMapper _mapper = mapper;
-        private readonly ICampaignAdService _campaignAdvertisementService = campaignAdvertisementService;
+        private readonly IMapper _mapper;
+        private readonly ICampaignAdService _campaignAdvertisementService;
+
+        public CampaignAdController(IMapper mapper, ICampaignAdService campaignAdvertisementService)
+        {
+            _mapper = mapper;
+            _campaignAdvertisementService = campaignAdvertisementService;
+        }
 
         [HttpGet]
         [Route("campaign-advertisements")]
-        public async Task<IActionResult> GetCampaignAdvertisements()
+        public async Task<IActionResult> GetCampaignAdvertisements([FromQuery] GetRequest getRequest)
         {
-            var result = await _campaignAdvertisementService.GetAllCampaignAdvertisementsAsync();
+            var result = await _campaignAdvertisementService.GetAllCampaignAdvertisementsAsync(getRequest.PageInfo);
             if (result.Count() == 0)
                 return NotFound();
             var adCampaigns = _mapper.Map<IEnumerable<CampaignAdvertisementResponse>>(result);

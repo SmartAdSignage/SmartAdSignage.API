@@ -11,10 +11,16 @@ namespace SmartAdSignage.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(IMapper mapper, IUserService usersService) : ControllerBase
+    public class UserController : ControllerBase
     {
-        private readonly IMapper _mapper = mapper;
-        private readonly IUserService _usersService = usersService;
+        private readonly IMapper _mapper;
+        private readonly IUserService _usersService;
+
+        public UserController(IMapper mapper, IUserService usersService)
+        {
+            _mapper = mapper;
+            _usersService = usersService;
+        }
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
