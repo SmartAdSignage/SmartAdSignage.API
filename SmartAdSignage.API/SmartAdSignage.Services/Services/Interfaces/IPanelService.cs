@@ -15,5 +15,6 @@ namespace SmartAdSignage.Services.Services.Interfaces
         Task<bool> DeletePanelByIdAsync(int id);
         Task<Panel> GetPanelByIdAsync(int id);
         Task<IEnumerable<Panel>> GetAllPanelsAsync(PageInfo pageInfo);
+        Task<IEnumerable<Panel>> GetAllPanelsByUserIdAsync(string id);
     }
 }

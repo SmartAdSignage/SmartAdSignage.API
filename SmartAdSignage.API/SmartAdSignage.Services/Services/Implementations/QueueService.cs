@@ -39,6 +39,16 @@ namespace SmartAdSignage.Services.Services.Implementations
             return await _unitOfWork.Queues.GetPageWithMultiplePredicatesAsync(null, pageInfo, EntitySelector.QueueSelector);
         }
 
+        public async Task<IEnumerable<Queue>> GetAllQueuesByAdvertisementIdAsync(int id)
+        {
+            return await _unitOfWork.Queues.GetByConditionAsync(x => x.AdvertisementId == id, EntitySelector.QueueSelector);
+        }
+
+        public async Task<IEnumerable<Queue>> GetAllQueuesByPanelIdAsync(int id)
+        {
+            return await _unitOfWork.Queues.GetByConditionAsync(x => x.PanelId == id, EntitySelector.QueueSelector);
+        }
+
         public async Task<Queue> GetQueueByIdAsync(int id)
         {
             var result = await _unitOfWork.Queues.GetByConditionAsync(x => x.Id == id);

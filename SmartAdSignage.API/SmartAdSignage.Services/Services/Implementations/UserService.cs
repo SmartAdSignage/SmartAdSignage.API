@@ -26,6 +26,10 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<IdentityResult> RegisterUserAsync(User user, string password)
         {
             var result = await _usersRepository.CreateUserAsync(user, password);
+            if (!result.Succeeded)
+            {
+                return result;
+            }    
             await _usersRepository.AddRoleToUserAsync(user, "User");
             return result;
         }

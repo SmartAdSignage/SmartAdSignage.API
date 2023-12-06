@@ -37,8 +37,6 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<AdCampaign> GetAdCampaignByIdAsync(int id)
         {
             var result = await _unitOfWork.AdCampaigns.GetByConditionAsync( x => x.Id == id, EntitySelector.AdCampaignSelector);
-            /*result.CampaignAdvertisements = await _unitOfWork.CampaignAdvertisements.GetByConditionAsync(x => x.AdCampaignId == id);
-            result.Panels = await _unitOfWork.Panels.GetAllAsync().Resu;*/
             return result.FirstOrDefault();
         }
 
@@ -67,7 +65,9 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<IEnumerable<AdCampaign>> GetFinishedAdCampaigns(string userId)
         {
-            var adCampaigns = await _unitOfWork.AdCampaigns.GetByConditionAsync(x => x.UserId == userId && x.EndDate <= DateTime.Now);
+            var adCampaigns = await _unitOfWork.AdCampaigns.GetByConditionAsync(x => x.UserId == userId && x.EndDate <= DateTime.Now, EntitySelector.AdCampaignSelector);
+            /*if (adCampaigns is null)
+                throw new DirectoryNotFoundException(nameof(adCampaigns));*/
             foreach (var adCampaign in adCampaigns)
             {
                 if (adCampaign.Status != "Finished") 
@@ -108,6 +108,11 @@ namespace SmartAdSignage.Services.Services.Implementations
             if (adCampaign.StartDate >= adCampaign.EndDate || adCampaign.EndDate <= DateTime.Now)
                 return false;
             return true;
+        }
+
+        public async Task<IEnumerable<AdCampaign>> GetAllAdCampaignsByUserIdAsync(string id)
+        {
+            return await _unitOfWork.AdCampaigns.GetByConditionAsync(x => x.UserId == id, EntitySelector.AdCampaignSelector);
         }
     }
 }

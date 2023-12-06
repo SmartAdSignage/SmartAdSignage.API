@@ -15,5 +15,7 @@ namespace SmartAdSignage.Services.Services.Interfaces
         Task<IEnumerable<CampaignAdvertisement>> GetAllCampaignAdvertisementsAsync(PageInfo pageInfo);
         Task<CampaignAdvertisement> GetCampaignAdvertisementByIdAsync(int id);
         Task<bool> DeleteCampaignAdvertisementByIdAsync(int id);
+
+        Task<IEnumerable<CampaignAdvertisement>> GetAllCampaignAdvertisementsByCampaignIdAsync(int id);
     }
 }

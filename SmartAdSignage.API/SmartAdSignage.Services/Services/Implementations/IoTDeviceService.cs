@@ -38,6 +38,11 @@ namespace SmartAdSignage.Services.Services.Implementations
             return await _unitOfWork.IoTDevices.GetPageWithMultiplePredicatesAsync(null, pageInfo, EntitySelector.IoTDeviceSelector);
         }
 
+        public async Task<IEnumerable<IoTDevice>> GetAllIoTDevicesByPanelIdAsync(int id)
+        {
+            return await _unitOfWork.IoTDevices.GetByConditionAsync(x => x.PanelId == id, EntitySelector.IoTDeviceSelector);
+        }
+
         public async Task<IoTDevice> GetIoTDeviceByIdAsync(int id)
         {
             var result = await _unitOfWork.IoTDevices.GetByConditionAsync(x => x.Id == id, EntitySelector.IoTDeviceSelector);

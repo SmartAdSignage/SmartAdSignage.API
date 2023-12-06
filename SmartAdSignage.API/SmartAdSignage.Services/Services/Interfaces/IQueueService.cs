@@ -15,5 +15,9 @@ namespace SmartAdSignage.Services.Services.Interfaces
         Task<bool> DeleteQueueByIdAsync(int id);
         Task<Queue> GetQueueByIdAsync(int id);
         Task<IEnumerable<Queue>> GetAllQueuesAsync(PageInfo pageInfo);
+
+        Task<IEnumerable<Queue>> GetAllQueuesByPanelIdAsync(int id);
+
+        Task<IEnumerable<Queue>> GetAllQueuesByAdvertisementIdAsync(int id);
     }
 }

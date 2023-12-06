@@ -17,5 +17,7 @@ namespace SmartAdSignage.Services.Services.Interfaces
         Task<IEnumerable<AdCampaign>> GetAllAdCampaignsAsync(PageInfo pageInfo);
         Task<IEnumerable<AdCampaign>> GetFinishedAdCampaigns(string userId);
         Task<int[]> GetStatistics(AdCampaign adCampaign);
+
+        Task<IEnumerable<AdCampaign>> GetAllAdCampaignsByUserIdAsync(string id);
     }
 }

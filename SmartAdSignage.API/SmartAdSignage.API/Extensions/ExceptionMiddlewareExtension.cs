@@ -16,8 +16,7 @@ namespace SmartAdSignage.API.Extensions
     {
         private static readonly Serilog.ILogger Logger = Log.ForContext(MethodBase.GetCurrentMethod()?.DeclaringType);
 
-
-        public static void ConfigureExceptionHandler(this IApplicationBuilder app/*, ILoggerService logger*/)
+        public static void ConfigureExceptionHandler(this IApplicationBuilder app)
         {
             app.UseExceptionHandler(
                 appError =>
@@ -26,22 +25,12 @@ namespace SmartAdSignage.API.Extensions
                     {
                         var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
 
-                        //await response.WriteAsync(message);
-
-                        /*context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                        context.Response.ContentType = "application/json";*/
-
-
                         if (contextFeature != null)
                         {
-                            Logger.Error(contextFeature.Error, "error during executing {Context}", context.Request.Path.Value);
-                            //var response = context.Response;
+                            Logger.Error(contextFeature.Error, "Error during executing {Context}", context.Request.Path.Value);
                             context.Response.ContentType = "application/json";
 
-                            // get the response code and message
                             var status = GetResponse(contextFeature.Error);
-                            //response.StatusCode = (int)status;
-                            //logger.LogError($"Something went wrong: {contextFeature.Error}");
                             await context.Response.WriteAsync(
                                 new ExceptionResponse()
                                 {

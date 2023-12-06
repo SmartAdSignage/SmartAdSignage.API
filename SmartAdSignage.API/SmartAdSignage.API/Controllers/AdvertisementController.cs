@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using SmartAdSignage.Core.DTOs.Advertisement.Requests;
 using SmartAdSignage.Core.DTOs.Advertisement.Responses;
 using SmartAdSignage.Core.DTOs.Common;
@@ -14,11 +15,13 @@ namespace SmartAdSignage.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IAdvertisementService _advertisementService;
+        private readonly Serilog.ILogger _logger;
 
-        public AdvertisementController(IMapper mapper, IAdvertisementService advertisementService)
+        public AdvertisementController(IMapper mapper, IAdvertisementService advertisementService, Serilog.ILogger logger)
         {
             _mapper = mapper;
             _advertisementService = advertisementService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -26,8 +29,11 @@ namespace SmartAdSignage.API.Controllers
         public async Task<IActionResult> GetAdvertisements([FromQuery] GetRequest getRequest)
         {
             var result = await _advertisementService.GetAllAdvertisements(getRequest.PageInfo);
-            if (result.Count() == 0)
-                return NotFound();
+            if (result.Count() == 0 || result == null)
+            {
+                _logger.Information("Advertisements not found");
+                return NotFound("Advertisements not found");
+            }
             var advertisements = _mapper.Map<IEnumerable<AdvertisementResponse>>(result);
             return Ok(advertisements);
         }
@@ -38,9 +44,26 @@ namespace SmartAdSignage.API.Controllers
         {
             var result = await _advertisementService.GetAdvertisementByIdAsync(id);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Information($"Advertisement with id:{id} not found");
+                return NotFound($"Advertisement with id:{id} not found");
+            }
             var advertisement = _mapper.Map<AdvertisementResponse>(result);
             return Ok(advertisement);
+        }
+
+        [HttpGet]
+        [Route("advertisements/{id}")]
+        public async Task<IActionResult> GetAdvertisementsByUserId(string id)
+        {
+            var result = await _advertisementService.GetAllAdvertisementsByUserIdAsync(id);
+            if (result.Count() == 0)
+            {
+                _logger.Error($"Advertisements with user id: {id} not found");
+                return NotFound($"Advertisements with user id: {id} not found");
+            }
+            var advertisements = _mapper.Map<IEnumerable<AdvertisementResponse>>(result);
+            return Ok(advertisements);
         }
 
         [HttpDelete]
@@ -49,7 +72,10 @@ namespace SmartAdSignage.API.Controllers
         {
             var result = await _advertisementService.DeleteAdvertisementByIdAsync(id);
             if (result is false)
-                return NotFound();
+            {
+                _logger.Error($"Advertisement with id: {id} not found");
+                return NotFound($"Advertisement with id: {id} not found");
+            }
             return NoContent();
         }
 
@@ -60,7 +86,10 @@ namespace SmartAdSignage.API.Controllers
             var advertisement = _mapper.Map<Advertisement>(advertisementRequest);
             var result = await _advertisementService.CreateAdvertisementAsync(advertisement);
             if (result == null)
-                return BadRequest();
+            {
+                _logger.Error($"Couldn't create advertisement");
+                return BadRequest($"Couldn't create advertisement");
+            }
             var advertisementResponse = _mapper.Map<AdvertisementResponse>(result);
             return Ok(advertisementResponse);
         }
@@ -72,7 +101,10 @@ namespace SmartAdSignage.API.Controllers
             var advertisement = _mapper.Map<Advertisement>(advertisementRequest);
             var result = await _advertisementService.UpdateAdvertisementAsync(id, advertisement);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error($"Advertisement with id: {id} not found");
+                return NotFound($"Advertisement with id: {id} not found");
+            }
             var advertisementResponse = _mapper.Map<AdvertisementResponse>(result);
             return Ok(advertisementResponse);
         }

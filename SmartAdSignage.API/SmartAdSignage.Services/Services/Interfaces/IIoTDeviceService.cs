@@ -17,5 +17,7 @@ namespace SmartAdSignage.Services.Services.Interfaces
         Task<bool> DeleteIoTDeviceByIdAsync(int id);
 
         Task<IoTDevice> UpdateIoTDeviceAsync(int id, IoTDevice ioTDevice);
+
+        Task<IEnumerable<IoTDevice>> GetAllIoTDevicesByPanelIdAsync(int id);
     }
 }

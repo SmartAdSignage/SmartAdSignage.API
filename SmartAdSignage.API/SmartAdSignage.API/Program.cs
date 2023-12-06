@@ -1,5 +1,3 @@
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -18,10 +16,7 @@ using System.Text;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-// Add services to the container.
 builder.Services.AddControllers();
-//builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString));
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<ISeeder, Seeder>();
 builder.Services.AddIdentity<User, IdentityRole>()
@@ -31,11 +26,6 @@ builder.Services.AddAuthorization();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
-/*builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-var containerBuilder = new ContainerBuilder();
-containerBuilder.RegisterGeneric(typeof(GenericRepository<>)).As(typeof(IGenericRepository<>)).InstancePerLifetimeScope();
-containerBuilder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
-containerBuilder.RegisterType<Seeder>().As<ISeeder>().SingleInstance();*/
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IGenericRepository<Advertisement>, GenericRepository<Advertisement>>();
 builder.Services.AddTransient<IGenericRepository<AdCampaign>, GenericRepository<AdCampaign>>();
@@ -44,7 +34,6 @@ builder.Services.AddTransient<IGenericRepository<Location>, GenericRepository<Lo
 builder.Services.AddTransient<IGenericRepository<IoTDevice>, GenericRepository<IoTDevice>>();
 builder.Services.AddTransient<IGenericRepository<CampaignAdvertisement>, GenericRepository<CampaignAdvertisement>>();
 builder.Services.AddTransient<IGenericRepository<Queue>, GenericRepository<Queue>>();
-/*builder.Services.AddTransient<IGenericRepository<AdCampaignPanel>, GenericRepository<AdCampaignPanel>>();*/
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
@@ -56,12 +45,23 @@ builder.Services.AddScoped<IIoTDeviceService, IoTDeviceService>();
 builder.Services.AddScoped<IAdCampaignService, AdCampaignService>();
 builder.Services.AddScoped<ICampaignAdService, CampaignAdService>();
 builder.Services.AddScoped<IQueueService, QueueService>();
-/*builder.Services.AddScoped<ILoggerService, LoggerService>();*/
 
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureMapping();
 builder.Services.ConfigureCors();
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Default Password settings.
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequiredUniqueChars = 1;
+});
+
+builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
 
 var app = builder.Build();
 
@@ -76,8 +76,9 @@ app.UseRouting();
 
 app.UseHttpsRedirection();
 
+app.UseSerilogRequestLogging();
 app.UseCors("EnableCORS");
-app.ConfigureExceptionHandler(/*app.Services.CreateScope().ServiceProvider.GetRequiredService<ILoggerService>()*/);
+app.ConfigureExceptionHandler();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -91,3 +92,5 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+await Log.CloseAndFlushAsync();

@@ -46,6 +46,28 @@ namespace SmartAdSignage.API.Controllers
             return Ok(panel);
         }
 
+        [HttpGet]
+        [Route("panel-queues/{id}")]
+        public async Task<IActionResult> GetQueuesByPanelId(int id)
+        {
+            var result = await _queueService.GetAllQueuesByPanelIdAsync(id);
+            if (result.Count() == 0)
+                return NotFound();
+            var panels = _mapper.Map<IEnumerable<QueueResponse>>(result);
+            return Ok(panels);
+        }
+
+        [HttpGet]
+        [Route("advertisement-queues/{id}")]
+        public async Task<IActionResult> GetQueuesByAdvertisementId(int id)
+        {
+            var result = await _queueService.GetAllQueuesByAdvertisementIdAsync(id);
+            if (result.Count() == 0)
+                return NotFound();
+            var panels = _mapper.Map<IEnumerable<QueueResponse>>(result);
+            return Ok(panels);
+        }
+
         [HttpDelete]
         [Route("queue/{id}")]
         public async Task<IActionResult> DeleteQueue(int id)

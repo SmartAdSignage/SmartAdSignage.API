@@ -38,6 +38,11 @@ namespace SmartAdSignage.Services.Services.Implementations
             return await _unitOfWork.Panels.GetPageWithMultiplePredicatesAsync(null, pageInfo, EntitySelector.PanelSelector);
         }
 
+        public async Task<IEnumerable<Panel>> GetAllPanelsByUserIdAsync(string id)
+        {
+            return await _unitOfWork.Panels.GetByConditionAsync(x => x.UserId == id, EntitySelector.PanelSelector);
+        }
+
         public async Task<Panel> GetPanelByIdAsync(int id)
         {
             var result = await _unitOfWork.Panels.GetByConditionAsync(x => x.Id == id);

@@ -44,6 +44,11 @@ namespace SmartAdSignage.Services.Services.Implementations
             return await _unitOfWork.Advertisements.GetPageWithMultiplePredicatesAsync(null, pageInfo, EntitySelector.AdvertisementSelector);
         }
 
+        public async Task<IEnumerable<Advertisement>> GetAllAdvertisementsByUserIdAsync(string id)
+        {
+            return await _unitOfWork.Advertisements.GetByConditionAsync(x => x.UserId == id, EntitySelector.AdvertisementSelector);
+        }
+
         public async Task<Advertisement> UpdateAdvertisementAsync(int id, Advertisement advertisement)
         {
             var existingAdvertisement = await _unitOfWork.Advertisements.GetByIdAsync(id);

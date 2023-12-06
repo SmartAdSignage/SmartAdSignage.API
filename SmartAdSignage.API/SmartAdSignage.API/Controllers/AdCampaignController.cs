@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using SmartAdSignage.Core.DTOs.AdCampaign.Reponses;
 using SmartAdSignage.Core.DTOs.AdCampaign.Requests;
 using SmartAdSignage.Core.DTOs.Advertisement.Responses;
@@ -17,11 +18,13 @@ namespace SmartAdSignage.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IAdCampaignService _adCampaignService;
+        private readonly Serilog.ILogger _logger;
 
-        public AdCampaignController(IMapper mapper, IAdCampaignService adCampaignService) 
+        public AdCampaignController(IMapper mapper, IAdCampaignService adCampaignService, Serilog.ILogger logger)
         {
             _mapper = mapper;
             _adCampaignService = adCampaignService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -30,7 +33,24 @@ namespace SmartAdSignage.API.Controllers
         {
             var result = await _adCampaignService.GetAllAdCampaignsAsync(adCampaignsRequest.PageInfo);
             if (result.Count() == 0)
-                return NotFound();
+            {
+                _logger.Error($"Ad campaigns not found");
+                return NotFound($"Ad campaigns not found");
+            }
+            var adCampaigns = _mapper.Map<IEnumerable<AdCampaignResponse>>(result);
+            return Ok(adCampaigns);
+        }
+
+        [HttpGet]
+        [Route("ad-campaigns/{id}")]
+        public async Task<IActionResult> GetAdCampaignsByUserId(string id)
+        {
+            var result = await _adCampaignService.GetAllAdCampaignsByUserIdAsync(id);
+            if (result.Count() == 0 || result == null)
+            {
+                _logger.Error($"Ad campaigns with user id: {id} not found");
+                return NotFound($"Ad campaigns with user id: {id} not found");
+            }
             var adCampaigns = _mapper.Map<IEnumerable<AdCampaignResponse>>(result);
             return Ok(adCampaigns);
         }
@@ -42,7 +62,10 @@ namespace SmartAdSignage.API.Controllers
             /*var userId = User.Claims.FirstOrDefault()?.Value;*/
             var result = await _adCampaignService.GetAdCampaignByIdAsync(id);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error($"Ad campaign with id: {id} not found");
+                return NotFound($"Ad campaign with id: {id} not found");
+            }
             var adCampaign = _mapper.Map<AdCampaignResponse>(result);
             return Ok(adCampaign);
         }
@@ -53,7 +76,10 @@ namespace SmartAdSignage.API.Controllers
         {
             var result = await _adCampaignService.DeleteAdCampaignByIdAsync(id);
             if (result is false)
-                return NotFound();
+            {
+                _logger.Error($"Ad campaign with id: {id} not found");
+                return NotFound($"Ad campaign with id: {id} not found");
+            }
             return NoContent();
         }
 
@@ -64,7 +90,11 @@ namespace SmartAdSignage.API.Controllers
             var adCampaign = _mapper.Map<AdCampaign>(adCampaignRequest);
             var result = await _adCampaignService.CreateAdCampaignAsync(adCampaign);
             if (result == null)
-                return BadRequest();
+            {
+                _logger.Error($"Couldn't create ad campaign");
+                return BadRequest($"Couldn't create ad campaign");
+            }
+
             var adCampaignResponse = _mapper.Map<AdCampaignResponse>(result);
             return Ok(adCampaignResponse);
         }
@@ -76,7 +106,10 @@ namespace SmartAdSignage.API.Controllers
             var adCampaign = _mapper.Map<AdCampaign>(adCampaignRequest);
             var result = await _adCampaignService.UpdateAdCampaignAsync(id, adCampaign);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error($"Ad campaign with id: {id} not found");
+                return NotFound($"Ad campaign with id: {id} not found");
+            }
             var adCampaignResponse = _mapper.Map<AdCampaignResponse>(result);
             return Ok(adCampaignResponse);
         }
@@ -87,7 +120,11 @@ namespace SmartAdSignage.API.Controllers
         {
             var adCampaigns = await _adCampaignService.GetFinishedAdCampaigns(userId);
             if (adCampaigns.Count() == 0 || adCampaigns == null)
-                return NotFound();
+            {
+                _logger.Error($"No finished ad campaigns found for user with id: {userId}");
+                return NotFound($"No finished ad campaigns found for user with id: {userId}");
+            }
+
             IList<FinishedAdCampaignResponse> results = new List<FinishedAdCampaignResponse>();
             foreach (var adCampaign in adCampaigns)
             {

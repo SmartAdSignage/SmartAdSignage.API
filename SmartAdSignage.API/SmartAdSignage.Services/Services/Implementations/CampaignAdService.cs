@@ -37,6 +37,11 @@ namespace SmartAdSignage.Services.Services.Implementations
             return await _unitOfWork.CampaignAdvertisements.GetPageWithMultiplePredicatesAsync(null, pageInfo, EntitySelector.CampaignAdvertisementSelector);
         }
 
+        public async Task<IEnumerable<CampaignAdvertisement>> GetAllCampaignAdvertisementsByCampaignIdAsync(int id)
+        {
+            return await _unitOfWork.CampaignAdvertisements.GetByConditionAsync(x => x.AdCampaignId == id, EntitySelector.CampaignAdvertisementSelector);
+        }
+
         public async Task<CampaignAdvertisement> GetCampaignAdvertisementByIdAsync(int id)
         {
             var result = await _unitOfWork.CampaignAdvertisements.GetByConditionAsync(x => x.Id == id, EntitySelector.CampaignAdvertisementSelector);

@@ -15,11 +15,13 @@ namespace SmartAdSignage.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ICampaignAdService _campaignAdvertisementService;
+        private readonly Serilog.ILogger _logger;
 
-        public CampaignAdController(IMapper mapper, ICampaignAdService campaignAdvertisementService)
+        public CampaignAdController(IMapper mapper, ICampaignAdService campaignAdvertisementService, Serilog.ILogger logger)
         {
             _mapper = mapper;
             _campaignAdvertisementService = campaignAdvertisementService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -27,8 +29,11 @@ namespace SmartAdSignage.API.Controllers
         public async Task<IActionResult> GetCampaignAdvertisements([FromQuery] GetRequest getRequest)
         {
             var result = await _campaignAdvertisementService.GetAllCampaignAdvertisementsAsync(getRequest.PageInfo);
-            if (result.Count() == 0)
-                return NotFound();
+            if (result.Count() == 0 || result == null) 
+            {
+                _logger.Error("No campaign advertisements found");
+                return NotFound("No campaign advertisements found");
+            }
             var adCampaigns = _mapper.Map<IEnumerable<CampaignAdvertisementResponse>>(result);
             return Ok(adCampaigns);
         }
@@ -38,10 +43,27 @@ namespace SmartAdSignage.API.Controllers
         public async Task<IActionResult> GetCampaignAdvertisement(int id)
         {
             var result = await _campaignAdvertisementService.GetCampaignAdvertisementByIdAsync(id);
-            if (result == null)
-                return NotFound();
+            if (result == null) 
+            {
+                _logger.Error($"Campaign advertisement with id:{id} not found");
+                return NotFound($"Campaign advertisement with id:{id} not found");
+            }
             var adCampaign = _mapper.Map<CampaignAdvertisementResponse>(result);
             return Ok(adCampaign);
+        }
+
+        [HttpGet]
+        [Route("campaign-advertisements/{id}")]
+        public async Task<IActionResult> GetCampaignAdvertisementsByAdcampaignId(int id)
+        {
+            var result = await _campaignAdvertisementService.GetAllCampaignAdvertisementsByCampaignIdAsync(id);
+            if (result.Count() == 0 || result == null)
+            {
+                _logger.Error($"Campaign advertisements with campaign id:{id} not found");
+                return NotFound($"Campaign advertisements with campaign id:{id} not found");
+            }
+            var adCampaigns = _mapper.Map<IEnumerable<CampaignAdvertisementResponse>>(result);
+            return Ok(adCampaigns);
         }
 
         [HttpDelete]
@@ -50,7 +72,10 @@ namespace SmartAdSignage.API.Controllers
         {
             var result = await _campaignAdvertisementService.DeleteCampaignAdvertisementByIdAsync(id);
             if (result is false)
-                return NotFound();
+            {
+                _logger.Error($"Campaign advertisement with id: {id} not found");
+                return NotFound($"Campaign advertisement with id: {id} not found");
+            }
             return NoContent();
         }
 
@@ -61,7 +86,10 @@ namespace SmartAdSignage.API.Controllers
             var campaignAdvertisement = _mapper.Map<CampaignAdvertisement>(campaignAdvertisementRequest);
             var result = await _campaignAdvertisementService.CreateCampaignAdvertisementAsync(campaignAdvertisement);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error($"Couldn't create campaign advertisement");
+                return BadRequest($"Couldn't create campaign advertisement");
+            }
             var campaignAdvertisementResponse = _mapper.Map<CampaignAdvertisementResponse>(result);
             return Ok(campaignAdvertisementResponse);
         }
@@ -73,7 +101,10 @@ namespace SmartAdSignage.API.Controllers
             var campaignAdvertisement = _mapper.Map<CampaignAdvertisement>(campaignAdvertisementRequest);
             var result = await _campaignAdvertisementService.UpdateCampaignAdvertisementAsync(id, campaignAdvertisement);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error($"Campaign advertisement with id: {id} not found");
+                return NotFound($"Campaign advertisement with id: {id} not found");
+            }
             var campaignAdvertisementResponse = _mapper.Map<CampaignAdvertisementResponse>(result);
             return Ok(campaignAdvertisementResponse);
         }

@@ -43,6 +43,17 @@ namespace SmartAdSignage.API.Controllers
             return Ok(IoTDevice);
         }
 
+        [HttpGet]
+        [Route("IoTDevices/{id}")]
+        public async Task<IActionResult> GetIoTDevicesByPanelId(int id)
+        {
+            var result = await _ioTDeviceService.GetAllIoTDevicesByPanelIdAsync(id);
+            if (result.Count() == 0)
+                return NotFound();
+            var IoTDevices = _mapper.Map<IEnumerable<IoTDeviceResponse>>(result);
+            return Ok(IoTDevices);
+        }
+
         [HttpDelete]
         [Route("IoTDevice/{id}")]
         public async Task<IActionResult> DeleteIoTDevice(int id)

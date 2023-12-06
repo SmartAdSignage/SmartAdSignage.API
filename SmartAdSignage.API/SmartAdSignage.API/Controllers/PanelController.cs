@@ -44,6 +44,17 @@ namespace SmartAdSignage.API.Controllers
             return Ok(panel);
         }
 
+        [HttpGet]
+        [Route("panels/{id}")]
+        public async Task<IActionResult> GetPanelsByUserId(string id)
+        {
+            var result = await _panelService.GetAllPanelsByUserIdAsync(id);
+            if (result.Count() == 0)
+                return NotFound();
+            var panels = _mapper.Map<IEnumerable<PanelResponse>>(result);
+            return Ok(panels);
+        }
+
         [HttpDelete]
         [Route("panel/{id}")]
         public async Task<IActionResult> DeletePanel(int id)

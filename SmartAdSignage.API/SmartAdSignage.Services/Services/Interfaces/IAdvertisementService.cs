@@ -17,6 +17,9 @@ namespace SmartAdSignage.Services.Services.Interfaces
         Task<Advertisement> GetAdvertisementByIdAsync(int id);
 
         Task<Advertisement> UpdateAdvertisementAsync(int id, Advertisement advertisement);
+
         Task<bool> DeleteAdvertisementByIdAsync(int id);
+
+        Task<IEnumerable<Advertisement>> GetAllAdvertisementsByUserIdAsync(string id);
     }
 }

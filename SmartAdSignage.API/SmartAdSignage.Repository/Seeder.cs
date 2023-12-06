@@ -89,20 +89,6 @@ namespace SmartAdSignage.Repository
                     {
                         throw new Exception(result.Errors.First().Description);
                     }
-
-                    /*result = await _userManager.AddClaimsAsync(
-                        user,
-                        new Claim[]
-                        {
-                            new Claim(JwtClaimTypes.GivenName, user.FirstName),
-                            new Claim(JwtClaimTypes.FamilyName, user.LastName),
-                            new Claim(JwtClaimTypes.Email, user.Email)
-                        });*/
-
-                    if (!result.Succeeded)
-                    {
-                        throw new Exception(result.Errors.First().Description);
-                    }
                 }
             }
         }
