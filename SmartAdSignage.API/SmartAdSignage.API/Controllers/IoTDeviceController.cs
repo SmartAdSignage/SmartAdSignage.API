@@ -14,20 +14,25 @@ namespace SmartAdSignage.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IIoTDeviceService _ioTDeviceService;
+        private readonly Serilog.ILogger _logger;
 
-        public IoTDeviceController(IMapper mapper, IIoTDeviceService ioTDeviceService)
+        public IoTDeviceController(IMapper mapper, IIoTDeviceService ioTDeviceService, Serilog.ILogger logger)
         {
             _mapper = mapper;
             _ioTDeviceService = ioTDeviceService;
+            _logger = logger;
         }
-        
+
         [HttpGet]
         [Route("IoTDevices")]
         public async Task<IActionResult> GetIoTDevices([FromQuery] GetRequest getRequest)
         {
             var result = await _ioTDeviceService.GetAllIoTDevicesAsync(getRequest.PageInfo);
-            if (result.Count() == 0)
-                return NotFound();
+            if (!result.Any() || result == null) 
+            {
+                _logger.Error("No IoT devices found");
+                return NotFound("No IoT devices found");
+            }
             var IoTDevices = _mapper.Map<IEnumerable<IoTDeviceResponse>>(result);
             return Ok(IoTDevices);
         }
@@ -38,7 +43,10 @@ namespace SmartAdSignage.API.Controllers
         {
             var result = await _ioTDeviceService.GetIoTDeviceByIdAsync(id);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error($"IoT device with id:{id} not found");
+                return NotFound($"IoT device with id:{id} not found");
+            }
             var IoTDevice = _mapper.Map<IoTDeviceResponse>(result);
             return Ok(IoTDevice);
         }
@@ -48,8 +56,11 @@ namespace SmartAdSignage.API.Controllers
         public async Task<IActionResult> GetIoTDevicesByPanelId(int id)
         {
             var result = await _ioTDeviceService.GetAllIoTDevicesByPanelIdAsync(id);
-            if (result.Count() == 0)
-                return NotFound();
+            if (!result.Any() || result == null) 
+            {
+                _logger.Error($"No IoT devices found for panel with id:{id}");
+                return NotFound($"No IoT devices found for panel with id:{id}");
+            }
             var IoTDevices = _mapper.Map<IEnumerable<IoTDeviceResponse>>(result);
             return Ok(IoTDevices);
         }
@@ -60,7 +71,10 @@ namespace SmartAdSignage.API.Controllers
         {
             var result = await _ioTDeviceService.DeleteIoTDeviceByIdAsync(id);
             if (result is false)
-                return NotFound();
+            {
+                _logger.Error($"IoT device with id:{id} not found");
+                return NotFound($"IoT device with id:{id} not found");
+            }
             return NoContent();
         }
 
@@ -71,7 +85,10 @@ namespace SmartAdSignage.API.Controllers
             var ioTDevice = _mapper.Map<IoTDevice>(ioTDeviceRequest);
             var result = await _ioTDeviceService.CreateIoTDeviceAsync(ioTDevice);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error($"Couldn't create IoT device");
+                return BadRequest($"Couldn't create IoT device");
+            }
             var ioTDeviceResponse = _mapper.Map<IoTDeviceResponse>(result);
             return Ok(ioTDeviceResponse);
         }
@@ -83,7 +100,10 @@ namespace SmartAdSignage.API.Controllers
             var ioTDevice = _mapper.Map<IoTDevice>(ioTDeviceRequest);
             var result = await _ioTDeviceService.UpdateIoTDeviceAsync(id, ioTDevice);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error($"IoT device with id: {id} not found");
+                return NotFound($"IoT device with id: {id} not found");
+            }
             var ioTDeviceResponse = _mapper.Map<IoTDeviceResponse>(result);
             return Ok(ioTDeviceResponse);
         }

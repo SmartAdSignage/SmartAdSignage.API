@@ -24,26 +24,18 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
         }
         public async Task<TEntity> AddAsync(TEntity entity)
         {
-            try 
-            {
-                /*var result = _dbSet.Add(entity).Entity;*/
-                var result = (await _dbSet.AddAsync(entity)).Entity;
-                return result;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            var result = (await _dbSet.AddAsync(entity)).Entity;
+            return result;
         }
 
-        public bool DeleteAsync(TEntity entity)
+        public bool Delete(TEntity entity)
         {
-            try 
+            try
             {
                 _dbSet.Remove(entity);
                 return true;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -63,8 +55,7 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
         public async Task<IList<TEntity>> GetPageWithMultiplePredicatesAsync(
         IEnumerable<Expression<Func<TEntity, bool>>> predicates,
         PageInfo pageInfo,
-        Expression<Func<TEntity, TEntity>> selector,
-        CancellationToken cancellationToken = default)
+        Expression<Func<TEntity, TEntity>> selector)
         {
             var skip = pageInfo.Size * (pageInfo.Number - 1);
 
@@ -87,14 +78,13 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
                 }
             }
 
-            var entities = await query.ToListAsync(cancellationToken: cancellationToken);
+            var entities = await query.ToListAsync();
             return entities;
         }
 
         public async Task<IList<TEntity>> GetByConditionAsync(
         Expression<Func<TEntity, bool>> predicate,
-        Expression<Func<TEntity, TEntity>> selector = null,
-        CancellationToken cancellationToken = default)
+        Expression<Func<TEntity, TEntity>> selector = null)
         {
             IQueryable<TEntity> query = _dbSet;
 
@@ -109,36 +99,23 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
                 query = query.Where(predicate);
             }
 
-            return await query.ToListAsync(cancellationToken: cancellationToken);
+            return await query.ToListAsync();
         }
 
-        public TEntity UpdateAsync(TEntity entity)
+        public TEntity Update(TEntity entity)
         {
             return _dbSet.Update(entity).Entity;
         }
 
-        public async Task AddAsync(TEntity obj, CancellationToken cancellationToken = default)
-        {
-            await _dbSet.AddAsync(obj, cancellationToken: cancellationToken);
-        }
-
         /// <inheritdoc />
-        public async Task AddManyAsync(IEnumerable<TEntity> obj, CancellationToken cancellationToken = default)
+        public async Task AddManyAsync(IEnumerable<TEntity> obj)
         {
-            await _dbSet.AddRangeAsync(obj, cancellationToken: cancellationToken);
+            await _dbSet.AddRangeAsync(obj);
         }
 
-        public async Task Commit()
+        public async Task SaveAsync()
         {
             await _applicationDbContext.SaveChangesAsync();
-            /*try 
-            {
-                
-            }
-            catch (Exception)
-            {
-                throw;
-            }*/
         }
     }
 }

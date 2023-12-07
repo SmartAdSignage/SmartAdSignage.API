@@ -15,11 +15,13 @@ namespace SmartAdSignage.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IPanelService _panelService;
+        private readonly Serilog.ILogger _logger;
 
-        public PanelController(IMapper mapper, IPanelService panelService)
+        public PanelController(IMapper mapper, IPanelService panelService, Serilog.ILogger logger)
         {
             _mapper = mapper;
             _panelService = panelService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -27,8 +29,11 @@ namespace SmartAdSignage.API.Controllers
         public async Task<IActionResult> GetPanels([FromQuery] GetRequest getRequest)
         {
             var result = await _panelService.GetAllPanelsAsync(getRequest.PageInfo);
-            if (result.Count() == 0)
-                return NotFound();
+            if (!result.Any() || result == null) 
+            {
+                _logger.Error("No panels found");
+                return NotFound("No panels found");
+            }
             var panels = _mapper.Map<IEnumerable<PanelResponse>>(result);
             return Ok(panels);
         }
@@ -39,7 +44,10 @@ namespace SmartAdSignage.API.Controllers
         {
             var result = await _panelService.GetPanelByIdAsync(id);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error($"Panel with id:{id} not found");
+                return NotFound($"Panel with id:{id} not found");
+            }
             var panel = _mapper.Map<PanelResponse>(result);
             return Ok(panel);
         }
@@ -49,8 +57,11 @@ namespace SmartAdSignage.API.Controllers
         public async Task<IActionResult> GetPanelsByUserId(string id)
         {
             var result = await _panelService.GetAllPanelsByUserIdAsync(id);
-            if (result.Count() == 0)
-                return NotFound();
+            if (!result.Any() || result == null)
+            {
+                _logger.Error($"No panels found for user with id:{id}");
+                return NotFound($"No panels found for user with id:{id}");
+            }
             var panels = _mapper.Map<IEnumerable<PanelResponse>>(result);
             return Ok(panels);
         }
@@ -61,7 +72,10 @@ namespace SmartAdSignage.API.Controllers
         {
             var result = await _panelService.DeletePanelByIdAsync(id);
             if (result is false)
-                return NotFound();
+            {
+                _logger.Error($"Panel with id:{id} not found");
+                return NotFound($"Panel with id:{id} not found");
+            }
             return NoContent();
         }
 
@@ -72,7 +86,10 @@ namespace SmartAdSignage.API.Controllers
             var panel = _mapper.Map<Panel>(panelRequest);
             var result = await _panelService.CreatePanelAsync(panel);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error("Coulnd't create panel");
+                return BadRequest("Coulnd't create panel");
+            }
             var panelResponse = _mapper.Map<PanelResponse>(result);
             return Ok(panelResponse);
         }
@@ -84,7 +101,10 @@ namespace SmartAdSignage.API.Controllers
             var panel = _mapper.Map<Panel>(panelRequest);
             var result = await _panelService.UpdatePanelAsync(id, panel);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error($"Panel with id:{id} not found");
+                return NotFound($"Panel with id: {id} not found");
+            }
             var panelResponse = _mapper.Map<PanelResponse>(result);
             return Ok(panelResponse);
         }

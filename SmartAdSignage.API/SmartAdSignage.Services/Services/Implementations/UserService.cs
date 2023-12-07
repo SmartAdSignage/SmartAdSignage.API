@@ -25,6 +25,8 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<IdentityResult> RegisterUserAsync(User user, string password)
         {
+            if (user == null)
+                throw new ArgumentException("Invalid arguments");
             var result = await _usersRepository.CreateUserAsync(user, password);
             if (!result.Succeeded)
             {
@@ -94,15 +96,20 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<IdentityResult> RegisterAdminAsync(User user, string password)
         {
+            if (user == null)
+                throw new ArgumentException("Invalid arguments");
             var result = await _usersRepository.CreateUserAsync(user, password);
+            if (!result.Succeeded)
+            {
+                return result;
+            }
             await _usersRepository.AddRoleToUserAsync(user, "Admin");
             return result;
         }
 
         private SigningCredentials GetSigningCredentials()
         {
-            /*var jwtConfig = GetConfiguration();*/
-            var key = Encoding.UTF8.GetBytes(GetConfiguration("secret")/* jwtConfig["secret"]*/);
+            var key = Encoding.UTF8.GetBytes(GetConfiguration("secret"));
             var secret = new SymmetricSecurityKey(key);
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
@@ -123,13 +130,12 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
         {
-            /*var jwtSettings = GetConfiguration();*/
             var tokenOptions = new JwtSecurityToken
             (
-                issuer: GetConfiguration("validIssuer") /*jwtSettings["validIssuer"]*/,
-                audience: GetConfiguration("validAudience") /*jwtSettings["validAudience"]*/,
+                issuer: GetConfiguration("validIssuer"),
+                audience: GetConfiguration("validAudience"),
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(GetConfiguration("expiresInMinutes")/*jwtSettings["expiresInMinutes"]*/)),
+                expires: DateTime.Now.AddMinutes(Convert.ToDouble(GetConfiguration("expiresInMinutes"))),
                 signingCredentials: signingCredentials
             );
             return tokenOptions;
@@ -186,6 +192,8 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<IdentityResult> UpdateUserAsync(string userName, User user)
         {
+            if (user == null)
+                throw new ArgumentException("Invalid arguments");
             var existingUser = await _usersRepository.GetByUsernameAsync(userName);
             if (existingUser == null)
                 return null;

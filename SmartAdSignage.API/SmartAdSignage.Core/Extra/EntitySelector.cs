@@ -31,6 +31,9 @@ namespace SmartAdSignage.Core.Extra
                 Id = panel.Id,
                 Width = panel.Width,
                 Height = panel.Height,
+                Status = panel.Status,
+                Latitude = panel.Latitude,
+                Longitude = panel.Longitude,
                 LocationId = panel.LocationId,
                 UserId = panel.UserId
             }).ToList(),
@@ -101,6 +104,7 @@ namespace SmartAdSignage.Core.Extra
                 Height = q.Panel.Height,
                 LocationId = q.Panel.LocationId,
                 UserId = q.Panel.UserId,
+                Status = q.Panel.Status,
                 Latitude = q.Panel.Latitude,
                 Longitude = q.Panel.Longitude,
             }
@@ -120,6 +124,8 @@ namespace SmartAdSignage.Core.Extra
                 Width = panel.Width,
                 Height = panel.Height,
                 UserId = panel.UserId,
+                Status = panel.Status,
+                LocationId = panel.LocationId,
                 Latitude = panel.Latitude,
                 Longitude = panel.Longitude,
             }).ToList()
@@ -176,6 +182,7 @@ namespace SmartAdSignage.Core.Extra
                 Height = q.Panel.Height,
                 LocationId = q.Panel.LocationId,
                 UserId = q.Panel.UserId,
+                Status = q.Panel.Status,
                 Latitude = q.Panel.Latitude,
                 Longitude = q.Panel.Longitude,
             },

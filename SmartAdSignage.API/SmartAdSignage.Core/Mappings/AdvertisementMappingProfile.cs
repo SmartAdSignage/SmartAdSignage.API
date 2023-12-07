@@ -14,9 +14,10 @@ namespace SmartAdSignage.Core.Mappings
     {
         public AdvertisementMappingProfile()
         {
-            CreateMap<Advertisement, AdvertisementResponse>();
+            CreateMap<Advertisement, AdvertisementResponse>().ReverseMap();
+            CreateMap<Advertisement, AdvertisementPropsResponse>().ReverseMap();
             CreateMap<AdvertisementRequest, Advertisement>()
-                .ForMember(dest => dest.File, opt => opt.MapFrom(src => File.ReadAllBytes(src.File)));
+                .ForMember(dest => dest.File, opt => opt.MapFrom(src => File.ReadAllBytes(src.File))).ReverseMap();
         }
     }
 }

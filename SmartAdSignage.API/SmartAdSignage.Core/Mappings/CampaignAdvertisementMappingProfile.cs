@@ -14,11 +14,9 @@ namespace SmartAdSignage.Core.Mappings
     {
         public CampaignAdvertisementMappingProfile()
         {
-            CreateMap<CampaignAdvertisement, CampaignAdvertisementResponse>();
-            CreateMap<CampaignAdvertisementRequest, CampaignAdvertisement>();
-            /*CreateMap<SmartAdSignage.Core.DTOs.CampaignAdvertisement.Requests.CreateCampaignAdvertisementRequest, SmartAdSignage.Core.Models.CampaignAdvertisement>();
-            CreateMap<SmartAdSignage.Core.DTOs.CampaignAdvertisement.Requests.UpdateCampaignAdvertisementRequest, SmartAdSignage.Core.Models.CampaignAdvertisement>();
-            CreateMap<SmartAdSignage.Core.Models.CampaignAdvertisement, SmartAdSignage.Core.DTOs.CampaignAdvertisement.Requests.UpdateCampaignAdvertisementRequest>();*/
+            CreateMap<CampaignAdvertisement, CampaignAdvertisementResponse>().ReverseMap();
+            CreateMap<CampaignAdvertisement, CampaignAdvertisementPropsResponse>().ReverseMap();
+            CreateMap<CampaignAdvertisementRequest, CampaignAdvertisement>().ReverseMap();
         }
     }
 }

@@ -32,7 +32,7 @@ namespace SmartAdSignage.API.Controllers
         public async Task<IActionResult> GetAdCampaigns([FromQuery] GetRequest adCampaignsRequest)
         {
             var result = await _adCampaignService.GetAllAdCampaignsAsync(adCampaignsRequest.PageInfo);
-            if (result.Count() == 0)
+            if (!result.Any() || result == null)
             {
                 _logger.Error($"Ad campaigns not found");
                 return NotFound($"Ad campaigns not found");
@@ -46,7 +46,7 @@ namespace SmartAdSignage.API.Controllers
         public async Task<IActionResult> GetAdCampaignsByUserId(string id)
         {
             var result = await _adCampaignService.GetAllAdCampaignsByUserIdAsync(id);
-            if (result.Count() == 0 || result == null)
+            if (!result.Any() || result == null)
             {
                 _logger.Error($"Ad campaigns with user id: {id} not found");
                 return NotFound($"Ad campaigns with user id: {id} not found");

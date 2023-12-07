@@ -15,9 +15,8 @@ namespace SmartAdSignage.Core.Mappings
         public PanelMappingProfile()
         {
             CreateMap<Panel, PanelResponse>().ReverseMap();
-            CreateMap<PanelRequest, Panel>();
-            /*CreateMap<CreatePanelRequest, Panel>();
-            CreateMap<UpdatePanelRequest, Panel>();*/
+            CreateMap<PanelRequest, Panel>().ReverseMap();
+            CreateMap<Panel, PanelPropsResponse>().ReverseMap();
         }
     }
 }

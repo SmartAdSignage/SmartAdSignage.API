@@ -29,7 +29,7 @@ namespace SmartAdSignage.API.Controllers
         public async Task<IActionResult> GetCampaignAdvertisements([FromQuery] GetRequest getRequest)
         {
             var result = await _campaignAdvertisementService.GetAllCampaignAdvertisementsAsync(getRequest.PageInfo);
-            if (result.Count() == 0 || result == null) 
+            if (!result.Any() || result == null) 
             {
                 _logger.Error("No campaign advertisements found");
                 return NotFound("No campaign advertisements found");
@@ -57,7 +57,7 @@ namespace SmartAdSignage.API.Controllers
         public async Task<IActionResult> GetCampaignAdvertisementsByAdcampaignId(int id)
         {
             var result = await _campaignAdvertisementService.GetAllCampaignAdvertisementsByCampaignIdAsync(id);
-            if (result.Count() == 0 || result == null)
+            if (!result.Any() || result == null)
             {
                 _logger.Error($"Campaign advertisements with campaign id:{id} not found");
                 return NotFound($"Campaign advertisements with campaign id:{id} not found");

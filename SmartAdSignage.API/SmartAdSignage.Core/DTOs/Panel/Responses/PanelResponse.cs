@@ -1,4 +1,4 @@
-﻿using SmartAdSignage.Core.DTOs.AdCampaign.Reponses;
+﻿using SmartAdSignage.Core.DTOs.AdCampaign.Responses;
 using SmartAdSignage.Core.DTOs.IoTDevice.Responses;
 using SmartAdSignage.Core.DTOs.Location.Responses;
 using SmartAdSignage.Core.DTOs.Queue.Responses;
@@ -21,14 +21,14 @@ namespace SmartAdSignage.Core.DTOs.Panel.Responses
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
 
-        public LocationResponse? Location { get; set; }
+        public LocationPropsResponse? Location { get; set; }
 
         public UserResponse? User { get; set; }
 
-        public ICollection<AdCampaignResponse>? AdCampaigns { get; set; }
+        public ICollection<AdCampaignPropsResponse>? AdCampaigns { get; set; }
 
-        public ICollection<IoTDeviceResponse>? IoTDevices { get; set; }
+        public ICollection<IoTDevicePropsResponse>? IoTDevices { get; set; }
 
-        public ICollection<QueueResponse>? Queues { get; set; }
+        public ICollection<QueuePropsResponse>? Queues { get; set; }
     }
 }

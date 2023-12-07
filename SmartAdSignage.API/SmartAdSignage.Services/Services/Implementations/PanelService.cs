@@ -20,16 +20,18 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<Panel> CreatePanelAsync(Panel panel)
         {
+            if (panel == null)
+                throw new ArgumentException("Invalid arguments");
             var result = await _unitOfWork.Panels.AddAsync(panel);
-            await _unitOfWork.Panels.Commit();
+            await _unitOfWork.Panels.SaveAsync();
             return result;
         }
 
         public async Task<bool> DeletePanelByIdAsync(int id)
         {
             var panel = await _unitOfWork.Panels.GetByIdAsync(id);
-            var result = _unitOfWork.Panels.DeleteAsync(panel);
-            await _unitOfWork.Panels.Commit();
+            var result = _unitOfWork.Panels.Delete(panel);
+            await _unitOfWork.Panels.SaveAsync();
             return result;
         }
 
@@ -51,6 +53,8 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<Panel> UpdatePanelAsync(int id, Panel panel)
         {
+            if (panel == null)
+                throw new ArgumentException("Invalid arguments");
             var exsistingPanel = await _unitOfWork.Panels.GetByIdAsync(id);
             if (exsistingPanel == null)
                 return null;
@@ -62,8 +66,8 @@ namespace SmartAdSignage.Services.Services.Implementations
             exsistingPanel.LocationId = panel.LocationId;
             exsistingPanel.UserId = panel.UserId;
             exsistingPanel.DateUpdated = DateTime.Now;
-            var result = _unitOfWork.Panels.UpdateAsync(exsistingPanel);
-            await _unitOfWork.Panels.Commit();
+            var result = _unitOfWork.Panels.Update(exsistingPanel);
+            await _unitOfWork.Panels.SaveAsync();
             return result;
         }
     }

@@ -20,16 +20,18 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<Advertisement> CreateAdvertisementAsync(Advertisement advertisement)
         {
+            if (advertisement == null)
+                throw new ArgumentException("Invalid arguments");
             var result = await _unitOfWork.Advertisements.AddAsync(advertisement);
-            await _unitOfWork.Advertisements.Commit();
+            await _unitOfWork.Advertisements.SaveAsync();
             return result;
         }
 
         public async Task<bool> DeleteAdvertisementByIdAsync(int id)
         {
             var advertisement = await _unitOfWork.Advertisements.GetByIdAsync(id);
-            var result = _unitOfWork.Advertisements.DeleteAsync(advertisement);
-            await _unitOfWork.Advertisements.Commit();
+            var result = _unitOfWork.Advertisements.Delete(advertisement);
+            await _unitOfWork.Advertisements.SaveAsync();
             return result;
         }
 
@@ -51,6 +53,8 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<Advertisement> UpdateAdvertisementAsync(int id, Advertisement advertisement)
         {
+            if (advertisement == null)
+                throw new ArgumentException("Invalid arguments");
             var existingAdvertisement = await _unitOfWork.Advertisements.GetByIdAsync(id);
             if (existingAdvertisement == null)
                 return null;
@@ -59,8 +63,8 @@ namespace SmartAdSignage.Services.Services.Implementations
             existingAdvertisement.File = advertisement.File;
             existingAdvertisement.UserId = advertisement.UserId;
             existingAdvertisement.DateUpdated = DateTime.Now;
-            var result = _unitOfWork.Advertisements.UpdateAsync(existingAdvertisement);
-            await _unitOfWork.Advertisements.Commit();
+            var result = _unitOfWork.Advertisements.Update(existingAdvertisement);
+            await _unitOfWork.Advertisements.SaveAsync();
             return result;
         }
     }

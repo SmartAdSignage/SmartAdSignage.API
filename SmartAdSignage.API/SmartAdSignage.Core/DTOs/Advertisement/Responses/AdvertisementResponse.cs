@@ -18,8 +18,8 @@ namespace SmartAdSignage.Core.DTOs.Advertisement.Responses
 
         public UserResponse? User { get; set; }
 
-        public ICollection<CampaignAdvertisementResponse>? CampaignAdvertisements { get; set; }
+        public ICollection<CampaignAdvertisementPropsResponse>? CampaignAdvertisements { get; set; }
 
-        public ICollection<QueueResponse>? Queues { get; set; }
+        public ICollection<QueuePropsResponse>? Queues { get; set; }
     }
 }

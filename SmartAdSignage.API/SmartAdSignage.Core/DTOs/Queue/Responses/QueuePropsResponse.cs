@@ -8,11 +8,9 @@ using System.Threading.Tasks;
 
 namespace SmartAdSignage.Core.DTOs.Queue.Responses
 {
-    public class QueueResponse
+    public class QueuePropsResponse
     {
         public int Id { get; set; }
-        public PanelPropsResponse? Panel { get; set; }
-        public AdvertisementPropsResponse? Advertisement { get; set; }
         public int? DisplayOrder { get; set; }
     }
 }

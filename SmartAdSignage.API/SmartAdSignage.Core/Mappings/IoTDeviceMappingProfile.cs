@@ -14,11 +14,9 @@ namespace SmartAdSignage.Core.Mappings
     {
         public IoTDeviceMappingProfile()
         {
-            CreateMap<IoTDevice, IoTDeviceResponse>();
-            CreateMap<IoTDeviceRequest, IoTDevice>();
-            /*CreateMap<SmartAdSignage.Core.DTOs.IoTDevice.Requests.CreateIoTDeviceRequest, SmartAdSignage.Core.Models.IoTDevice>();
-            CreateMap<SmartAdSignage.Core.DTOs.IoTDevice.Requests.UpdateIoTDeviceRequest, SmartAdSignage.Core.Models.IoTDevice>();
-            CreateMap<SmartAdSignage.Core.Models.IoTDevice, SmartAdSignage.Core.DTOs.IoTDevice.Requests.UpdateIoTDeviceRequest>();*/
+            CreateMap<IoTDevice, IoTDeviceResponse>().ReverseMap();
+            CreateMap<IoTDeviceRequest, IoTDevice>().ReverseMap();
+            CreateMap<IoTDevice, IoTDevicePropsResponse>().ReverseMap();
         }
     }
 }

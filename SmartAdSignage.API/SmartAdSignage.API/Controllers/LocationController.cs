@@ -16,20 +16,25 @@ namespace SmartAdSignage.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ILocationService _locationService;
+        private readonly Serilog.ILogger _logger;
 
-        public LocationController(IMapper mapper, ILocationService locationService)
+        public LocationController(IMapper mapper, ILocationService locationService, Serilog.ILogger logger)
         {
             _mapper = mapper;
             _locationService = locationService;
+            _logger = logger;
         }
-        
+
         [HttpGet]
         [Route("locations")]
         public async Task<IActionResult> GetLocations([FromQuery] GetRequest getRequest)
         {
             var result = await _locationService.GetAllLocationsAsync(getRequest.PageInfo);
-            if (result.Count() == 0)
-                return NotFound();
+            if (!result.Any() || result == null)
+            {
+                _logger.Error("No locations found");
+                return NotFound("No locations found");
+            }
             var locations = _mapper.Map<List<LocationResponse>>(result);
             return Ok(locations);
         }
@@ -40,7 +45,10 @@ namespace SmartAdSignage.API.Controllers
         {
             var result = await _locationService.GetLocationByIdAsync(id);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error($"Location with id:{id} not found");
+                return NotFound($"Location with id:{id} not found");
+            }
             var location = _mapper.Map<LocationResponse>(result);
             return Ok(location);
         }
@@ -51,7 +59,10 @@ namespace SmartAdSignage.API.Controllers
         {
             var result = await _locationService.DeleteLocationByIdAsync(id);
             if (result is false)
-                return NotFound();
+            {
+                _logger.Error($"Location with id:{id} not found");
+                return NotFound($"Location with id:{id} not found");
+            }
             return NoContent();
         }
 
@@ -62,7 +73,10 @@ namespace SmartAdSignage.API.Controllers
             var location = _mapper.Map<Location>(locationRequest);
             var result = await _locationService.CreateLocationAsync(location);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error("Coulnd't create location");
+                return BadRequest("Coulnd't create location");
+            }
             var locationResponse = _mapper.Map<LocationResponse>(result);
             return Ok(locationResponse);
         }
@@ -74,7 +88,10 @@ namespace SmartAdSignage.API.Controllers
             var location = _mapper.Map<Location>(locationRequest);
             var result = await _locationService.UpdateLocationAsync(id, location);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error($"Location with id: {id} not found");
+                return NotFound($"Location with id: {id} not found");
+            }
             var locationResponse = _mapper.Map<LocationResponse>(result);
             return Ok(locationResponse);
         }

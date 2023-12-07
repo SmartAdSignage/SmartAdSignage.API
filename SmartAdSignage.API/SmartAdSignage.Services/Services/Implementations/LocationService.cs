@@ -20,16 +20,18 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<Location> CreateLocationAsync(Location location)
         {
+            if (location == null)
+                throw new ArgumentException("Invalid arguments");
             var result = await _unitOfWork.Locations.AddAsync(location);
-            await _unitOfWork.Locations.Commit();
+            await _unitOfWork.Locations.SaveAsync();
             return result;
         }
 
         public async Task<bool> DeleteLocationByIdAsync(int id)
         {
             var location = await _unitOfWork.Locations.GetByIdAsync(id);
-            var result = _unitOfWork.Locations.DeleteAsync(location);
-            await _unitOfWork.Locations.Commit();
+            var result = _unitOfWork.Locations.Delete(location);
+            await _unitOfWork.Locations.SaveAsync();
             return result;
         }
 
@@ -46,6 +48,8 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<Location> UpdateLocationAsync(int id, Location location)
         {
+            if (location == null)
+                throw new ArgumentException("Invalid arguments");
             var existingLocation = await _unitOfWork.Locations.GetByIdAsync(id);
             if (existingLocation == null)
                 return null;
@@ -55,8 +59,8 @@ namespace SmartAdSignage.Services.Services.Implementations
             existingLocation.BuildingNumber = location.BuildingNumber;
             existingLocation.Country = location.Country;
             existingLocation.DateUpdated = DateTime.Now;
-            var result = _unitOfWork.Locations.UpdateAsync(existingLocation);
-            await _unitOfWork.Locations.Commit();
+            var result = _unitOfWork.Locations.Update(existingLocation);
+            await _unitOfWork.Locations.SaveAsync();
             return result;
         }
     }

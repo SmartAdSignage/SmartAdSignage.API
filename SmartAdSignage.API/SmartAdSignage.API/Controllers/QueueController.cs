@@ -17,11 +17,13 @@ namespace SmartAdSignage.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IQueueService _queueService;
+        private readonly Serilog.ILogger _logger;
 
-        public QueueController(IMapper mapper, IQueueService queueService)
+        public QueueController(IMapper mapper, IQueueService queueService, Serilog.ILogger logger)
         {
             _mapper = mapper;
             _queueService = queueService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -29,8 +31,11 @@ namespace SmartAdSignage.API.Controllers
         public async Task<IActionResult> GetQueues([FromQuery] GetRequest getRequest)
         {
             var result = await _queueService.GetAllQueuesAsync(getRequest.PageInfo);
-            if (result.Count() == 0)
-                return NotFound();
+            if (!result.Any() || result == null) 
+            {
+                _logger.Error("No queues found");
+                return NotFound("No queues found");
+            }
             var panels = _mapper.Map<IEnumerable<QueueResponse>>(result);
             return Ok(panels);
         }
@@ -41,7 +46,10 @@ namespace SmartAdSignage.API.Controllers
         {
             var result = await _queueService.GetQueueByIdAsync(id);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error($"Queue with id:{id} not found");
+                return NotFound($"Queue with id:{id} not found");
+            }
             var panel = _mapper.Map<QueueResponse>(result);
             return Ok(panel);
         }
@@ -51,8 +59,11 @@ namespace SmartAdSignage.API.Controllers
         public async Task<IActionResult> GetQueuesByPanelId(int id)
         {
             var result = await _queueService.GetAllQueuesByPanelIdAsync(id);
-            if (result.Count() == 0)
-                return NotFound();
+            if (!result.Any() || result == null)
+            {
+                _logger.Error($"No queues found for panel with id:{id}");
+                return NotFound($"No queues found for panel with id:{id}");
+            }
             var panels = _mapper.Map<IEnumerable<QueueResponse>>(result);
             return Ok(panels);
         }
@@ -62,8 +73,11 @@ namespace SmartAdSignage.API.Controllers
         public async Task<IActionResult> GetQueuesByAdvertisementId(int id)
         {
             var result = await _queueService.GetAllQueuesByAdvertisementIdAsync(id);
-            if (result.Count() == 0)
-                return NotFound();
+            if (!result.Any() || result == null) 
+            {
+                _logger.Error($"No queues found for advertisement with id:{id}");
+                return NotFound($"No queues found for advertisement with id:{id}");
+            }
             var panels = _mapper.Map<IEnumerable<QueueResponse>>(result);
             return Ok(panels);
         }
@@ -74,7 +88,10 @@ namespace SmartAdSignage.API.Controllers
         {
             var result = await _queueService.DeleteQueueByIdAsync(id);
             if (result is false)
-                return NotFound();
+            {
+                _logger.Error($"Queue with id:{id} not found");
+                return NotFound($"Queue with id:{id} not found");
+            }
             return NoContent();
         }
 
@@ -85,7 +102,10 @@ namespace SmartAdSignage.API.Controllers
             var queue = _mapper.Map<Queue>(queueRequest);
             var result = await _queueService.CreateQueueAsync(queue);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error("Couldn't create queue");
+                return BadRequest("Couldn't create queue");
+            }
             var queueResponse = _mapper.Map<QueueResponse>(result);
             return Ok(queueResponse);
         }
@@ -97,7 +117,10 @@ namespace SmartAdSignage.API.Controllers
             var queue = _mapper.Map<Queue>(queueRequest);
             var result = await _queueService.UpdateQueueAsync(id, queue);
             if (result == null)
-                return NotFound();
+            {
+                _logger.Error($"Queue with id:{id} not found");
+                return NotFound($"Queue with id:{id} not found");
+            }
             var queueResponse = _mapper.Map<QueueResponse>(result);
             return Ok(queueResponse);
         }

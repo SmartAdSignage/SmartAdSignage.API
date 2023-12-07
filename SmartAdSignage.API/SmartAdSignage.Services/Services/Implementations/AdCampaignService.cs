@@ -19,18 +19,20 @@ namespace SmartAdSignage.Services.Services.Implementations
         }
         public async Task<AdCampaign> CreateAdCampaignAsync(AdCampaign adCampaign)
         {
+            if (adCampaign == null)
+                throw new ArgumentException("Invalid arguments");
             if (!ValidateAdCampaignDates(adCampaign)) 
-                return null;
+                throw new ArgumentException("Invalid dates");
             var result = await _unitOfWork.AdCampaigns.AddAsync(adCampaign);
-            await _unitOfWork.AdCampaigns.Commit();
+            await _unitOfWork.AdCampaigns.SaveAsync();
             return result;
         }
 
         public async Task<bool> DeleteAdCampaignByIdAsync(int id)
         {
             var adCampaign = await GetAdCampaignByIdAsync(id);
-            var result = _unitOfWork.AdCampaigns.DeleteAsync(adCampaign);
-            await _unitOfWork.AdCampaigns.Commit();
+            var result = _unitOfWork.AdCampaigns.Delete(adCampaign);
+            await _unitOfWork.AdCampaigns.SaveAsync();
             return result;
         }
 
@@ -51,14 +53,14 @@ namespace SmartAdSignage.Services.Services.Implementations
             if (existingAdCampaign == null)
                 return null;
             if (!ValidateAdCampaignDates(adCampaign))
-                return null;
+                throw new ArgumentException("Invalid dates");
             existingAdCampaign.Status = adCampaign.Status;
             existingAdCampaign.EndDate = adCampaign.EndDate;
             existingAdCampaign.TargetedViews = adCampaign.TargetedViews;
             existingAdCampaign.UserId = adCampaign.UserId;
             existingAdCampaign.DateUpdated = DateTime.Now;
-            var result = _unitOfWork.AdCampaigns.UpdateAsync(existingAdCampaign);
-            await _unitOfWork.AdCampaigns.Commit();
+            var result = _unitOfWork.AdCampaigns.Update(existingAdCampaign);
+            await _unitOfWork.AdCampaigns.SaveAsync();
             return result;
 
         }
@@ -66,15 +68,15 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<IEnumerable<AdCampaign>> GetFinishedAdCampaigns(string userId)
         {
             var adCampaigns = await _unitOfWork.AdCampaigns.GetByConditionAsync(x => x.UserId == userId && x.EndDate <= DateTime.Now, EntitySelector.AdCampaignSelector);
-            /*if (adCampaigns is null)
-                throw new DirectoryNotFoundException(nameof(adCampaigns));*/
+            if (adCampaigns is null)
+                return null;
             foreach (var adCampaign in adCampaigns)
             {
                 if (adCampaign.Status != "Finished") 
                 {
                     adCampaign.Status = "Finished";
-                    _unitOfWork.AdCampaigns.UpdateAsync(adCampaign);
-                    await _unitOfWork.AdCampaigns.Commit();
+                    _unitOfWork.AdCampaigns.Update(adCampaign);
+                    await _unitOfWork.AdCampaigns.SaveAsync();
                 }
             }
             return adCampaigns;

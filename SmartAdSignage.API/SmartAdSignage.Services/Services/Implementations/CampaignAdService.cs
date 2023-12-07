@@ -19,16 +19,18 @@ namespace SmartAdSignage.Services.Services.Implementations
         }
         public async Task<CampaignAdvertisement> CreateCampaignAdvertisementAsync(CampaignAdvertisement campaignAdvertisement)
         {
+            if (campaignAdvertisement == null)
+                throw new ArgumentException("Invalid arguments");
             var result = await _unitOfWork.CampaignAdvertisements.AddAsync(campaignAdvertisement);
-            await _unitOfWork.CampaignAdvertisements.Commit();
+            await _unitOfWork.CampaignAdvertisements.SaveAsync();
             return result;
         }
 
         public async Task<bool> DeleteCampaignAdvertisementByIdAsync(int id)
         {
             var campaignAdvertisement = await _unitOfWork.CampaignAdvertisements.GetByIdAsync(id);
-            var result =_unitOfWork.CampaignAdvertisements.DeleteAsync(campaignAdvertisement);
-            await _unitOfWork.CampaignAdvertisements.Commit();
+            var result =_unitOfWork.CampaignAdvertisements.Delete(campaignAdvertisement);
+            await _unitOfWork.CampaignAdvertisements.SaveAsync();
             return result;
         }
 
@@ -50,6 +52,8 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<CampaignAdvertisement> UpdateCampaignAdvertisementAsync(int id, CampaignAdvertisement campaignAdvertisement)
         {
+            if (campaignAdvertisement == null)
+                throw new ArgumentException("Invalid arguments");
             var existingCampaignAdvertisement = await _unitOfWork.CampaignAdvertisements.GetByIdAsync(id);
             if (existingCampaignAdvertisement == null)
                 return null;
@@ -58,8 +62,8 @@ namespace SmartAdSignage.Services.Services.Implementations
             existingCampaignAdvertisement.AdCampaignId = campaignAdvertisement.AdCampaignId;
             existingCampaignAdvertisement.DisplayedTimes = campaignAdvertisement.DisplayedTimes;
             existingCampaignAdvertisement.DateUpdated = DateTime.Now;
-            var result = _unitOfWork.CampaignAdvertisements.UpdateAsync(existingCampaignAdvertisement);
-            await _unitOfWork.CampaignAdvertisements.Commit();
+            var result = _unitOfWork.CampaignAdvertisements.Update(existingCampaignAdvertisement);
+            await _unitOfWork.CampaignAdvertisements.SaveAsync();
             return result;
         }
     }

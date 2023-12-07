@@ -21,16 +21,18 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<Queue> CreateQueueAsync(Queue queue)
         {
+            if (queue == null)
+                throw new ArgumentException("Invalid arguments");
             var result = await _unitOfWork.Queues.AddAsync(queue);
-            await _unitOfWork.Queues.Commit();
+            await _unitOfWork.Queues.SaveAsync();
             return result;
         }
 
         public async Task<bool> DeleteQueueByIdAsync(int id)
         {
             var queue = await _unitOfWork.Queues.GetByIdAsync(id);
-            var result = _unitOfWork.Queues.DeleteAsync(queue);
-            await _unitOfWork.Queues.Commit();
+            var result = _unitOfWork.Queues.Delete(queue);
+            await _unitOfWork.Queues.SaveAsync();
             return result;
         }
 
@@ -57,6 +59,8 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<Queue> UpdateQueueAsync(int id, Queue queue)
         {
+            if (queue == null)
+                throw new ArgumentException("Invalid arguments");
             var existingQueue = await _unitOfWork.Queues.GetByIdAsync(id);
             if (existingQueue == null)
                 return null;
@@ -64,8 +68,8 @@ namespace SmartAdSignage.Services.Services.Implementations
             existingQueue.AdvertisementId = queue.AdvertisementId;
             existingQueue.PanelId = queue.PanelId;
             existingQueue.DateUpdated = DateTime.Now;
-            var result = _unitOfWork.Queues.UpdateAsync(existingQueue);
-            await _unitOfWork.Queues.Commit();
+            var result = _unitOfWork.Queues.Update(existingQueue);
+            await _unitOfWork.Queues.SaveAsync();
             return result;
         }
     }

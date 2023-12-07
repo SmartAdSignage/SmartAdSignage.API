@@ -20,16 +20,18 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<IoTDevice> CreateIoTDeviceAsync(IoTDevice ioTDevice)
         {
+            if (ioTDevice == null)
+                throw new ArgumentException("Invalid arguments");
             var result = await _unitOfWork.IoTDevices.AddAsync(ioTDevice);
-            await _unitOfWork.IoTDevices.Commit();
+            await _unitOfWork.IoTDevices.SaveAsync();
             return result;
         }
 
         public async Task<bool> DeleteIoTDeviceByIdAsync(int id)
         {
             var iotDevice = await _unitOfWork.IoTDevices.GetByIdAsync(id);
-            var result = _unitOfWork.IoTDevices.DeleteAsync(iotDevice);
-            await _unitOfWork.IoTDevices.Commit();
+            var result = _unitOfWork.IoTDevices.Delete(iotDevice);
+            await _unitOfWork.IoTDevices.SaveAsync();
             return result;
         }
 
@@ -51,6 +53,8 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<IoTDevice> UpdateIoTDeviceAsync(int id, IoTDevice ioTDevice)
         {
+            if (ioTDevice == null)
+                throw new ArgumentException("Invalid arguments");
             var existingIoTDevice = await _unitOfWork.IoTDevices.GetByIdAsync(id);
             if (existingIoTDevice == null)
                 return null;
@@ -58,8 +62,8 @@ namespace SmartAdSignage.Services.Services.Implementations
             existingIoTDevice.Status = ioTDevice.Status;
             existingIoTDevice.PanelId = ioTDevice.PanelId;
             existingIoTDevice.DateUpdated = DateTime.Now;
-            var result = _unitOfWork.IoTDevices.UpdateAsync(existingIoTDevice);
-            await _unitOfWork.IoTDevices.Commit();
+            var result = _unitOfWork.IoTDevices.Update(existingIoTDevice);
+            await _unitOfWork.IoTDevices.SaveAsync();
             return result;
         }
     }

@@ -1,5 +1,4 @@
-﻿using SmartAdSignage.Core.DTOs.Panel.Responses;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SmartAdSignage.Core.DTOs.Location.Responses
 {
-    public class LocationResponse
+    public class LocationPropsResponse
     {
         public int Id { get; set; }
         public string? Country { get; set; }
@@ -15,6 +14,5 @@ namespace SmartAdSignage.Core.DTOs.Location.Responses
         public string? Street { get; set; }
         public string? StreetType { get; set; }
         public string? BuildingNumber { get; set; }
-        public ICollection<PanelPropsResponse>? Panels { get; set; }
     }
 }

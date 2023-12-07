@@ -14,19 +14,13 @@ namespace SmartAdSignage.Core.Mappings
     {
         public UserMappingProfile() 
         {
-            CreateMap<LoginRequest, User>();
+            CreateMap<LoginRequest, User>().ReverseMap();
 
             CreateMap<RegisterRequest, User>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))/*
-                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
-                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
-                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.CompanyName))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-*/
-                ;
-            CreateMap<User, RegisteredUserResponse>();
-            CreateMap<User, UserResponse>();
-            CreateMap<UpdateUserRequest, User>();
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email)).ReverseMap();
+            CreateMap<User, RegisteredUserResponse>().ReverseMap();
+            CreateMap<User, UserResponse>().ReverseMap();
+            CreateMap<UpdateUserRequest, User>().ReverseMap();
         }        
     }
 }
