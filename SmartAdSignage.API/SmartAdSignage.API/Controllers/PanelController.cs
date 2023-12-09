@@ -6,6 +6,7 @@ using SmartAdSignage.Core.DTOs.Panel.Requests;
 using SmartAdSignage.Core.DTOs.Panel.Responses;
 using SmartAdSignage.Core.Models;
 using SmartAdSignage.Services.Services.Interfaces;
+using System.Globalization;
 
 namespace SmartAdSignage.API.Controllers
 {
@@ -107,6 +108,46 @@ namespace SmartAdSignage.API.Controllers
             }
             var panelResponse = _mapper.Map<PanelResponse>(result);
             return Ok(panelResponse);
+        }
+
+        [HttpPost("change")]
+        public async Task<IActionResult> ChangeBrightness()
+        {
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.Timeout = TimeSpan.FromSeconds(60);
+                // Replace the base address with your actual address
+                httpClient.BaseAddress = new Uri("http://localhost:9080/");
+
+                // Create the request URL
+                string requestUrl = $"change/1";
+
+                try
+                {
+                    // Send a POST request to the specified URL
+                    HttpResponseMessage response = await httpClient.PostAsync(requestUrl, null);
+                    string content = await response.Content.ReadAsStringAsync();
+                    CultureInfo culture = CultureInfo.InvariantCulture;
+                    double luxValue;
+                    bool toggleValue = double.TryParse(content, NumberStyles.Any, culture, out luxValue);
+                    // double luxValue = Convert.ToDouble(content);
+                    // Check if the request was successful (status code 200 OK)
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return Ok("Toggle request successful");
+                    }
+                    else
+                    {
+                        // If the request was not successful, return an error message
+                        return BadRequest($"Toggle request failed with status code: {response.StatusCode}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions that may occur during the request
+                    return StatusCode(500, $"An error occurred while sending the toggle request: {ex.Message}");
+                }
+            }
         }
     }
 }
