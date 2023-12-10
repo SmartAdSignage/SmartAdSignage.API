@@ -99,7 +99,6 @@ namespace SmartAdSignage.Repository
             var location = await _unitOfWork.Locations.GetAllAsync();
             if (!location.Any())
             {
-                //var newLocations = new List<Location>();
                 var newLocations = (new Faker<Location>()
                     .RuleFor(l => l.Country, f => f.Address.Country())
                     .RuleFor(l => l.City, f => f.Address.City())
@@ -114,12 +113,12 @@ namespace SmartAdSignage.Repository
             var panels = await _unitOfWork.Panels.GetAllAsync();
             if (!panels.Any()) 
             {
-                //var newPanels = new List<Panel>();
                 var locationId = (await _unitOfWork.Locations.GetAllAsync()).First().Id;
                 var newPanels = new Faker<Panel>()
-                    .RuleFor(p => p.Height, f => f.Random.Double(0, 100))
-                    .RuleFor(p => p.Width, f => f.Random.Double(0, 100))
-                    .RuleFor(p => p.Status, "Works")
+                    .RuleFor(p => p.Height, f => f.Random.Double(3, 15))
+                    .RuleFor(p => p.Width, f => f.Random.Double(2, 8))
+                    .RuleFor(p => p.Brightness, f => f.Random.Double(10, 10000))
+                    .RuleFor(p => p.Status, "Active")
                     .RuleFor(p => p.Latitude, f => f.Random.Decimal(0, 100))
                     .RuleFor(p => p.Longitude, f => f.Random.Decimal(0, 100))
                     .RuleFor(p => p.LocationId, locationId)
@@ -132,12 +131,13 @@ namespace SmartAdSignage.Repository
             var iotDevices = await _unitOfWork.IoTDevices.GetAllAsync();
             if (!iotDevices.Any())
             {
+                panels = await _unitOfWork.Panels.GetAllAsync();
                 var panelId = (await _unitOfWork.Panels.GetAllAsync()).First().Id;
-                var newIoTDevices = new Faker<IoTDevice>()
-                    .RuleFor(i => i.Name, f => f.Random.String2(10))
-                    .RuleFor(i => i.Status, f => f.Random.String2(10))
-                    .RuleFor(i => i.PanelId, panelId)
-                    .Generate(5).ToList();
+                var newIoTDevices = panels.Select(panel => new Faker<IoTDevice>()
+                    .RuleFor(i => i.Name, "Lux Meter")
+                    .RuleFor(i => i.Status, "Active")
+                    .RuleFor(i => i.PanelId, panel.Id)
+                    .Generate()).ToList();
                 await _unitOfWork.IoTDevices.AddManyAsync(newIoTDevices);
                 await _context.SaveChangesAsync();
             }
@@ -163,7 +163,7 @@ namespace SmartAdSignage.Repository
                 var newQueues = new Faker<Queue>()
                     .RuleFor(q => q.AdvertisementId, advertisementId)
                     .RuleFor(q => q.PanelId, panelId)
-                    .RuleFor(q => q.DisplayOrder, f => f.Random.Int(1, 15))
+                    .RuleFor(q => q.DisplayOrder, f => f.Random.Int(1, 100))
                     .Generate(5).ToList();
                 await _unitOfWork.Queues.AddManyAsync(newQueues);
                 await _context.SaveChangesAsync();
@@ -191,7 +191,7 @@ namespace SmartAdSignage.Repository
                 var newCampaignAdvertisements = new Faker<CampaignAdvertisement>()
                     .RuleFor(c => c.AdvertisementId, advertisementId)
                     .RuleFor(c => c.AdCampaignId, adCampaignId)
-                    .RuleFor(c => c.Views, f => f.Random.Int(10000, 100000))
+                    .RuleFor(c => c.Views, f => f.Random.Int(1000, 10000))
                     .RuleFor(c => c.DisplayedTimes, f => f.Random.Int(2, 20))
                     .Generate(5).ToList();
                 await _unitOfWork.CampaignAdvertisements.AddManyAsync(newCampaignAdvertisements);

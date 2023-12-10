@@ -4,6 +4,7 @@ using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,6 +50,49 @@ namespace SmartAdSignage.Services.Services.Implementations
         {
             var result = await _unitOfWork.Panels.GetByConditionAsync(x => x.Id == id);
             return result.FirstOrDefault();
+        }
+
+        public async Task<Panel> ChangePanelBrightness(int id)
+        {
+            var panel = await _unitOfWork.Panels.GetByIdAsync(id);
+            if (panel == null)
+                return null;
+
+            double luxValue;
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.Timeout = TimeSpan.FromSeconds(60);
+                httpClient.BaseAddress = new Uri("http://localhost:9080/");
+
+                string requestUrl = $"change-brightness";
+                HttpResponseMessage response = await httpClient.GetAsync(requestUrl);
+                string content = await response.Content.ReadAsStringAsync();
+                CultureInfo culture = CultureInfo.InvariantCulture;
+                luxValue = Convert.ToDouble(content, culture);
+            }
+            if (luxValue > 100)
+            {
+                if (panel.Brightness == luxValue / 10)
+                    return panel;
+                else
+                { 
+                    panel.Brightness = luxValue / 10;
+                    panel = _unitOfWork.Panels.Update(panel);
+                    await _unitOfWork.Panels.SaveAsync();
+                }
+            }
+            else 
+            {
+                if (panel.Brightness == 10.0)
+                    return panel;
+                else
+                {
+                    panel.Brightness = 10.0;
+                    panel = _unitOfWork.Panels.Update(panel);
+                    await _unitOfWork.Panels.SaveAsync();
+                }
+            }
+            return panel;
         }
 
         public async Task<Panel> UpdatePanelAsync(int id, Panel panel)

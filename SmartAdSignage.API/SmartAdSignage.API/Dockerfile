@@ -20,6 +20,6 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-COPY ["SmartAdSignage.Repository/Images", "/app/Images"]
+COPY ["SmartAdSignage.API/Images", "/app/Images"]
 
 ENTRYPOINT ["dotnet", "SmartAdSignage.API.dll"]

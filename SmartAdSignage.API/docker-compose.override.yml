@@ -1,5 +1,10 @@
 version: '3.4'
 
+networks:
+  my-network:
+    external: true
+    driver: bridge
+
 services:
   smart-ad-signage.api:
     environment:
@@ -20,6 +25,6 @@ services:
         ACCEPT_EULA: "Y"
     restart: always
     ports:
-        - "1433:1433"
+        - "6969:6969"
     volumes:
       - db_data:/var/opt/mssql
