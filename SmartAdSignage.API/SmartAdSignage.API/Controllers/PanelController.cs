@@ -54,14 +54,14 @@ namespace SmartAdSignage.API.Controllers
         }
 
         [HttpGet]
-        [Route("panels/{id}")]
-        public async Task<IActionResult> GetPanelsByUserId(string id)
+        [Route("panels/{userId}")]
+        public async Task<IActionResult> GetPanelsByUserId(string userId)
         {
-            var result = await _panelService.GetAllPanelsByUserIdAsync(id);
+            var result = await _panelService.GetAllPanelsByUserIdAsync(userId);
             if (!result.Any() || result == null)
             {
-                _logger.Error($"No panels found for user with id:{id}");
-                return NotFound($"No panels found for user with id:{id}");
+                _logger.Error($"No panels found for user with id:{userId}");
+                return NotFound($"No panels found for user with id:{userId}");
             }
             var panels = _mapper.Map<IEnumerable<PanelResponse>>(result);
             return Ok(panels);
@@ -116,8 +116,8 @@ namespace SmartAdSignage.API.Controllers
             var result = await _panelService.ChangePanelBrightness(id);
             if (result == null)
             {
-                _logger.Error($"Panel with id:{id} not found");
-                return NotFound($"Panel with id: {id} not found");
+                _logger.Error($"Panel with id:{id} not found or it doesn't have light meter to execute the task");
+                return NotFound($"Panel with id:{id} not found or it doesn't have light meter to execute the task");
             }
             var panelResponse = _mapper.Map<PanelResponse>(result);
             return Ok(panelResponse);

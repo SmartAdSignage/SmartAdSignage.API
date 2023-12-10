@@ -42,7 +42,7 @@ namespace SmartAdSignage.API.Controllers
             string[]? tokens = await _usersService.GenerateTokensAsync();
             return Ok(new AuthenticatedResponse { TokenType = "Bearer", 
                 Token = tokens[0], 
-                Expiration = DateTime.Now.AddMinutes(Convert.ToDouble(_usersService.GetConfiguration("expiresInMinutes"))),
+                Expiration = DateTime.Now.AddMinutes(Convert.ToDouble(_usersService.GetConfiguration("accessTokenExpiresInMinutes"))),
                 RefreshToken = tokens[1]});
         }
 
@@ -102,7 +102,7 @@ namespace SmartAdSignage.API.Controllers
             }
             return Ok(new AuthenticatedResponse { TokenType = "Bearer", 
                 Token = newTokens[0], 
-                Expiration = DateTime.Now.AddMinutes(Convert.ToDouble(_usersService.GetConfiguration("expiresInMinutes"))), 
+                Expiration = DateTime.Now.AddMinutes(Convert.ToDouble(_usersService.GetConfiguration("accessTokenExpiresInMinutes"))), 
                 RefreshToken = newTokens[1] });
         }
 

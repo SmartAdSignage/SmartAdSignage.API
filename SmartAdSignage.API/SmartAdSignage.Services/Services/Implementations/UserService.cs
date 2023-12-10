@@ -48,7 +48,7 @@ namespace SmartAdSignage.Services.Services.Implementations
             var token = await GenerateAccessTokenAsync();
             var refreshToken = GenerateRefreshTokenAsync();
             _user.RefreshToken = refreshToken;
-            _user.RefreshTokenExpiryTime = DateTime.Now.AddDays(Convert.ToDouble(GetConfiguration("refreshTokenExpiresInDays")/*["refreshTokenExpiresInDays"]*/));
+            _user.RefreshTokenExpiryTime = DateTime.Now.AddDays(Convert.ToDouble(GetConfiguration("refreshTokenExpiresInDays")));
             await _usersRepository.UpdateUser(_user);
             return new string[] { token, refreshToken };
         }
@@ -72,7 +72,6 @@ namespace SmartAdSignage.Services.Services.Implementations
             var newRefreshToken = GenerateRefreshTokenAsync();
             _user.RefreshToken = newRefreshToken;
             await _usersRepository.UpdateUser(_user);
-            /*await _usersRepository.UpdateUser(_user);*/
             return new string[] { newToken, newRefreshToken };
         }
 
@@ -135,7 +134,7 @@ namespace SmartAdSignage.Services.Services.Implementations
                 issuer: GetConfiguration("validIssuer"),
                 audience: GetConfiguration("validAudience"),
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(GetConfiguration("expiresInMinutes"))),
+                expires: DateTime.Now.AddMinutes(Convert.ToDouble(GetConfiguration("accessTokenExpiresInMinutes"))),
                 signingCredentials: signingCredentials
             );
             return tokenOptions;
@@ -161,11 +160,11 @@ namespace SmartAdSignage.Services.Services.Implementations
         {
             var tokenValidationParameters = new TokenValidationParameters
             {
-                ValidateAudience = false, //you might want to validate the audience and issuer depending on your use case
+                ValidateAudience = false,
                 ValidateIssuer = false,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GetConfiguration("secret")/*["secret"]*/)),
-                ValidateLifetime = false //here we are saying that we don't care about the token's expiration date
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GetConfiguration("secret"))),
+                ValidateLifetime = false
             };
             var tokenHandler = new JwtSecurityTokenHandler();
             SecurityToken securityToken;

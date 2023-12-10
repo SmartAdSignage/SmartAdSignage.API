@@ -55,28 +55,28 @@ namespace SmartAdSignage.API.Controllers
         }
 
         [HttpGet]
-        [Route("panel-queues/{id}")]
-        public async Task<IActionResult> GetQueuesByPanelId(int id)
+        [Route("panel-queues/{panelId}")]
+        public async Task<IActionResult> GetQueuesByPanelId(int panelId)
         {
-            var result = await _queueService.GetAllQueuesByPanelIdAsync(id);
+            var result = await _queueService.GetAllQueuesByPanelIdAsync(panelId);
             if (!result.Any() || result == null)
             {
-                _logger.Error($"No queues found for panel with id:{id}");
-                return NotFound($"No queues found for panel with id:{id}");
+                _logger.Error($"No queues found for panel with id:{panelId}");
+                return NotFound($"No queues found for panel with id:{panelId}");
             }
             var panels = _mapper.Map<IEnumerable<QueueResponse>>(result);
             return Ok(panels);
         }
 
         [HttpGet]
-        [Route("advertisement-queues/{id}")]
-        public async Task<IActionResult> GetQueuesByAdvertisementId(int id)
+        [Route("advertisement-queues/{advertisementId}")]
+        public async Task<IActionResult> GetQueuesByAdvertisementId(int advertisementId)
         {
-            var result = await _queueService.GetAllQueuesByAdvertisementIdAsync(id);
+            var result = await _queueService.GetAllQueuesByAdvertisementIdAsync(advertisementId);
             if (!result.Any() || result == null) 
             {
-                _logger.Error($"No queues found for advertisement with id:{id}");
-                return NotFound($"No queues found for advertisement with id:{id}");
+                _logger.Error($"No queues found for advertisement with id:{advertisementId}");
+                return NotFound($"No queues found for advertisement with id:{advertisementId}");
             }
             var panels = _mapper.Map<IEnumerable<QueueResponse>>(result);
             return Ok(panels);

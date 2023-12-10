@@ -42,14 +42,14 @@ namespace SmartAdSignage.API.Controllers
         }
 
         [HttpGet]
-        [Route("ad-campaigns/{id}")]
-        public async Task<IActionResult> GetAdCampaignsByUserId(string id)
+        [Route("ad-campaigns/{userId}")]
+        public async Task<IActionResult> GetAdCampaignsByUserId(string userId)
         {
-            var result = await _adCampaignService.GetAllAdCampaignsByUserIdAsync(id);
+            var result = await _adCampaignService.GetAllAdCampaignsByUserIdAsync(userId);
             if (!result.Any() || result == null)
             {
-                _logger.Error($"Ad campaigns with user id: {id} not found");
-                return NotFound($"Ad campaigns with user id: {id} not found");
+                _logger.Error($"Ad campaigns with user id: {userId} not found");
+                return NotFound($"Ad campaigns with user id: {userId} not found");
             }
             var adCampaigns = _mapper.Map<IEnumerable<AdCampaignResponse>>(result);
             return Ok(adCampaigns);

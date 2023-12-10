@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SmartAdSignage.Core.Models;
-using SmartAdSignage.Repository.Data;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartAdSignage.Repository
+namespace SmartAdSignage.Repository.Data
 {
     public class Seeder : ISeeder
     {
@@ -23,7 +22,7 @@ namespace SmartAdSignage.Repository
 
         public Seeder(ApplicationDbContext context,
             IUnitOfWork unitOfWork,
-            UserManager<User> userManager, 
+            UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager)
         {
             _context = context;
@@ -93,25 +92,25 @@ namespace SmartAdSignage.Repository
             }
         }
 
-        private async Task SeedDataAsync(IServiceProvider serviceProvider) 
+        private async Task SeedDataAsync(IServiceProvider serviceProvider)
         {
             var userId = _userManager.Users.First().Id;
             var location = await _unitOfWork.Locations.GetAllAsync();
             if (!location.Any())
             {
-                var newLocations = (new Faker<Location>()
+                var newLocations = new Faker<Location>()
                     .RuleFor(l => l.Country, f => f.Address.Country())
                     .RuleFor(l => l.City, f => f.Address.City())
-                    .RuleFor(l => l.Street, f => f.Address.StreetAddress())
+                    .RuleFor(l => l.Street, f => f.Address.StreetName())
                     .RuleFor(l => l.StreetType, "Street")
-                    .RuleFor(l => l.BuildingNumber, f => f.Random.Int(10).ToString())
-                    .Generate(5)).ToList();
+                    .RuleFor(l => l.BuildingNumber, f => f.Random.Int(1, 10).ToString())
+                    .Generate(5).ToList();
 
                 await _unitOfWork.Locations.AddManyAsync(newLocations);
                 await _context.SaveChangesAsync();
-            }   
+            }
             var panels = await _unitOfWork.Panels.GetAllAsync();
-            if (!panels.Any()) 
+            if (!panels.Any())
             {
                 var locationId = (await _unitOfWork.Locations.GetAllAsync()).First().Id;
                 var newPanels = new Faker<Panel>()
@@ -134,7 +133,7 @@ namespace SmartAdSignage.Repository
                 panels = await _unitOfWork.Panels.GetAllAsync();
                 var panelId = (await _unitOfWork.Panels.GetAllAsync()).First().Id;
                 var newIoTDevices = panels.Select(panel => new Faker<IoTDevice>()
-                    .RuleFor(i => i.Name, "Lux Meter")
+                    .RuleFor(i => i.Name, "Light Meter")
                     .RuleFor(i => i.Status, "Active")
                     .RuleFor(i => i.PanelId, panel.Id)
                     .Generate()).ToList();

@@ -24,7 +24,7 @@ namespace SmartAdSignage.API.Controllers
         }
 
         [HttpGet]
-        [Route("IoTDevices")]
+        [Route("iot-devices")]
         public async Task<IActionResult> GetIoTDevices([FromQuery] GetRequest getRequest)
         {
             var result = await _ioTDeviceService.GetAllIoTDevicesAsync(getRequest.PageInfo);
@@ -38,7 +38,7 @@ namespace SmartAdSignage.API.Controllers
         }
 
         [HttpGet]
-        [Route("IoTDevice/{id}")]
+        [Route("iot-device/{id}")]
         public async Task<IActionResult> GetIoTDevice(int id)
         {
             var result = await _ioTDeviceService.GetIoTDeviceByIdAsync(id);
@@ -52,21 +52,21 @@ namespace SmartAdSignage.API.Controllers
         }
 
         [HttpGet]
-        [Route("IoTDevices/{id}")]
-        public async Task<IActionResult> GetIoTDevicesByPanelId(int id)
+        [Route("iot-devices/{panelId}")]
+        public async Task<IActionResult> GetIoTDevicesByPanelId(int panelId)
         {
-            var result = await _ioTDeviceService.GetAllIoTDevicesByPanelIdAsync(id);
+            var result = await _ioTDeviceService.GetAllIoTDevicesByPanelIdAsync(panelId);
             if (!result.Any() || result == null) 
             {
-                _logger.Error($"No IoT devices found for panel with id:{id}");
-                return NotFound($"No IoT devices found for panel with id:{id}");
+                _logger.Error($"No IoT devices found for panel with id:{panelId}");
+                return NotFound($"No IoT devices found for panel with id:{panelId}");
             }
             var IoTDevices = _mapper.Map<IEnumerable<IoTDeviceResponse>>(result);
             return Ok(IoTDevices);
         }
 
         [HttpDelete]
-        [Route("IoTDevice/{id}")]
+        [Route("iot-device/{id}")]
         public async Task<IActionResult> DeleteIoTDevice(int id)
         {
             var result = await _ioTDeviceService.DeleteIoTDeviceByIdAsync(id);
@@ -79,7 +79,7 @@ namespace SmartAdSignage.API.Controllers
         }
 
         [HttpPost]
-        [Route("IoTDevice")]
+        [Route("iot-device")]
         public async Task<IActionResult> CreateIoTDevice(IoTDeviceRequest ioTDeviceRequest)
         {
             var ioTDevice = _mapper.Map<IoTDevice>(ioTDeviceRequest);
@@ -94,7 +94,7 @@ namespace SmartAdSignage.API.Controllers
         }
 
         [HttpPut]
-        [Route("IoTDevice/{id}")]
+        [Route("iot-device/{id}")]
         public async Task<IActionResult> UpdateIoTDevice(int id, IoTDeviceRequest ioTDeviceRequest)
         {
             var ioTDevice = _mapper.Map<IoTDevice>(ioTDeviceRequest);

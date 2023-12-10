@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Serilog;
 using SmartAdSignage.Core.DTOs.Exception;
+using SmartAdSignage.Core.Extra;
 using SmartAdSignage.Services.Services.Interfaces;
 using System;
 using System.Net;
@@ -53,6 +54,7 @@ namespace SmartAdSignage.API.Extensions
                                     or AuthenticationException => HttpStatusCode.Unauthorized,
                 ArgumentNullException
                                     or NullReferenceException
+                                    or LightMeterException
                                     or ArgumentException
                                     or InvalidOperationException
                                     or DbUpdateException

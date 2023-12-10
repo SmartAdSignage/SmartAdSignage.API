@@ -53,14 +53,14 @@ namespace SmartAdSignage.API.Controllers
         }
 
         [HttpGet]
-        [Route("campaign-advertisements/{id}")]
-        public async Task<IActionResult> GetCampaignAdvertisementsByAdcampaignId(int id)
+        [Route("campaign-advertisements/{campaignId}")]
+        public async Task<IActionResult> GetCampaignAdvertisementsByAdcampaignId(int campaignId)
         {
-            var result = await _campaignAdvertisementService.GetAllCampaignAdvertisementsByCampaignIdAsync(id);
+            var result = await _campaignAdvertisementService.GetAllCampaignAdvertisementsByCampaignIdAsync(campaignId);
             if (!result.Any() || result == null)
             {
-                _logger.Error($"Campaign advertisements with campaign id:{id} not found");
-                return NotFound($"Campaign advertisements with campaign id:{id} not found");
+                _logger.Error($"Campaign advertisements with campaign id:{campaignId} not found");
+                return NotFound($"Campaign advertisements with campaign id:{campaignId} not found");
             }
             var adCampaigns = _mapper.Map<IEnumerable<CampaignAdvertisementResponse>>(result);
             return Ok(adCampaigns);

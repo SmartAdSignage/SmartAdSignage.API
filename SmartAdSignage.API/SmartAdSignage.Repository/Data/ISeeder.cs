@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartAdSignage.Repository
+namespace SmartAdSignage.Repository.Data
 {
     public interface ISeeder
     {

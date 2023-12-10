@@ -57,14 +57,16 @@ namespace SmartAdSignage.Services.Services.Implementations
             var panel = await _unitOfWork.Panels.GetByIdAsync(id);
             if (panel == null)
                 return null;
-
+            var lightMeter = (panel.IoTDevices?.Where(x => x.Name == "Light Meter").FirstOrDefault()) ?? throw new LightMeterException("No light meter was found to perform operation");
+            if (lightMeter.Status != "Active")
+                throw new LightMeterException("Light meter for this panel is not active");
             double luxValue;
             using (var httpClient = new HttpClient())
             {
                 httpClient.Timeout = TimeSpan.FromSeconds(60);
                 httpClient.BaseAddress = new Uri("http://localhost:9080/");
 
-                string requestUrl = $"change-brightness";
+                string requestUrl = $"get-lux-data";
                 HttpResponseMessage response = await httpClient.GetAsync(requestUrl);
                 string content = await response.Content.ReadAsStringAsync();
                 CultureInfo culture = CultureInfo.InvariantCulture;

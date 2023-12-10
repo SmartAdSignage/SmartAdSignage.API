@@ -4,6 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SmartAdSignage.Core.Mappings;
+using SmartAdSignage.Core.Models;
+using SmartAdSignage.Repository.Repositories.Implementations;
+using SmartAdSignage.Repository.Repositories.Interfaces;
+using SmartAdSignage.Services.Services.Implementations;
+using SmartAdSignage.Services.Services.Interfaces;
 using System.Text;
 
 namespace SmartAdSignage.API.Extensions
@@ -55,27 +60,30 @@ namespace SmartAdSignage.API.Extensions
             });
         }
 
-        /*public static void ConfigureAuthentication(this IServiceCollection services)
+        public static void RegisterServices(this IServiceCollection services)
         {
-            services.AddAuthentication(opt =>
-            {
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = "https://localhost:5001",
-                    ValidAudience = "https://localhost:5001",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"))
-                };
-            });
-        }*/
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAdvertisementService, AdvertisementService>();
+            services.AddScoped<IPanelService, PanelService>();
+            services.AddScoped<ILocationService, LocationService>();
+            services.AddScoped<IIoTDeviceService, IoTDeviceService>();
+            services.AddScoped<IAdCampaignService, AdCampaignService>();
+            services.AddScoped<ICampaignAdService, CampaignAdService>();
+            services.AddScoped<IQueueService, QueueService>();
+        }
+
+        public static void RegisterRepositories(this IServiceCollection services)
+        {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IGenericRepository<Advertisement>, GenericRepository<Advertisement>>();
+            services.AddTransient<IGenericRepository<AdCampaign>, GenericRepository<AdCampaign>>();
+            services.AddTransient<IGenericRepository<Panel>, GenericRepository<Panel>>();
+            services.AddTransient<IGenericRepository<Location>, GenericRepository<Location>>();
+            services.AddTransient<IGenericRepository<IoTDevice>, GenericRepository<IoTDevice>>();
+            services.AddTransient<IGenericRepository<CampaignAdvertisement>, GenericRepository<CampaignAdvertisement>>();
+            services.AddTransient<IGenericRepository<Queue>, GenericRepository<Queue>>();
+            services.AddScoped<IUserRepository, UserRepository>();
+        }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
