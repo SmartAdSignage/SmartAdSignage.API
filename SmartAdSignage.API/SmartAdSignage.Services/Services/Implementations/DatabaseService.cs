@@ -1,11 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SmartAdSignage.Services.Services.Implementations
 {
@@ -26,6 +21,7 @@ namespace SmartAdSignage.Services.Services.Implementations
             var backupPath = Path.Combine(directory, filename);
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
+
             await _unitOfWork.CreateDatabaseBackupAsync(backupPath);
         }
     }

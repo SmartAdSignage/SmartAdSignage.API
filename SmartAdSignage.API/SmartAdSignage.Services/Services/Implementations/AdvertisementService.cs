@@ -1,5 +1,6 @@
 ﻿using SmartAdSignage.Core.Extra;
 using SmartAdSignage.Core.Models;
+using SmartAdSignage.Core.Resources;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
 using System;
@@ -21,7 +22,7 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<Advertisement> CreateAdvertisementAsync(Advertisement advertisement)
         {
             if (advertisement == null)
-                throw new ArgumentException("Invalid arguments");
+                throw new ArgumentException(Resources.Get("Invalid arguments"));
             var result = await _unitOfWork.Advertisements.AddAsync(advertisement);
             await _unitOfWork.Advertisements.SaveAsync();
             return result;
@@ -54,7 +55,7 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<Advertisement> UpdateAdvertisementAsync(int id, Advertisement advertisement)
         {
             if (advertisement == null)
-                throw new ArgumentException("Invalid arguments");
+                throw new ArgumentException(Resources.Get("Invalid arguments"));
             var existingAdvertisement = await _unitOfWork.Advertisements.GetByIdAsync(id);
             if (existingAdvertisement == null)
                 return null;

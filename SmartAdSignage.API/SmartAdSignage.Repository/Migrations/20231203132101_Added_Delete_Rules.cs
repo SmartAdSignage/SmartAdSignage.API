@@ -11,11 +11,11 @@ namespace SmartAdSignage.Repository.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_AdCampaigns_AspNetUsers_UserId",
+                name: "FK_AdCampaigns_AspNetUsersuserId",
                 table: "AdCampaigns");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Advertisements_AspNetUsers_UserId",
+                name: "FK_Advertisements_AspNetUsersuserId",
                 table: "Advertisements");
 
             migrationBuilder.DropForeignKey(
@@ -31,7 +31,7 @@ namespace SmartAdSignage.Repository.Migrations
                 table: "IoTDevices");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Panels_AspNetUsers_UserId",
+                name: "FK_Panels_AspNetUsersuserId",
                 table: "Panels");
 
             migrationBuilder.DropForeignKey(
@@ -67,7 +67,7 @@ namespace SmartAdSignage.Repository.Migrations
                 oldNullable: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_AdCampaigns_AspNetUsers_UserId",
+                name: "FK_AdCampaigns_AspNetUsersuserId",
                 table: "AdCampaigns",
                 column: "UserId",
                 principalTable: "AspNetUsers",
@@ -75,7 +75,7 @@ namespace SmartAdSignage.Repository.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Advertisements_AspNetUsers_UserId",
+                name: "FK_Advertisements_AspNetUsersuserId",
                 table: "Advertisements",
                 column: "UserId",
                 principalTable: "AspNetUsers",
@@ -107,7 +107,7 @@ namespace SmartAdSignage.Repository.Migrations
                 onDelete: ReferentialAction.SetNull);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Panels_AspNetUsers_UserId",
+                name: "FK_Panels_AspNetUsersuserId",
                 table: "Panels",
                 column: "UserId",
                 principalTable: "AspNetUsers",
@@ -143,11 +143,11 @@ namespace SmartAdSignage.Repository.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_AdCampaigns_AspNetUsers_UserId",
+                name: "FK_AdCampaigns_AspNetUsersuserId",
                 table: "AdCampaigns");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Advertisements_AspNetUsers_UserId",
+                name: "FK_Advertisements_AspNetUsersuserId",
                 table: "Advertisements");
 
             migrationBuilder.DropForeignKey(
@@ -163,7 +163,7 @@ namespace SmartAdSignage.Repository.Migrations
                 table: "IoTDevices");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Panels_AspNetUsers_UserId",
+                name: "FK_Panels_AspNetUsersuserId",
                 table: "Panels");
 
             migrationBuilder.DropForeignKey(
@@ -195,14 +195,14 @@ namespace SmartAdSignage.Repository.Migrations
                 oldType: "int");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_AdCampaigns_AspNetUsers_UserId",
+                name: "FK_AdCampaigns_AspNetUsersuserId",
                 table: "AdCampaigns",
                 column: "UserId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Advertisements_AspNetUsers_UserId",
+                name: "FK_Advertisements_AspNetUsersuserId",
                 table: "Advertisements",
                 column: "UserId",
                 principalTable: "AspNetUsers",
@@ -230,7 +230,7 @@ namespace SmartAdSignage.Repository.Migrations
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Panels_AspNetUsers_UserId",
+                name: "FK_Panels_AspNetUsersuserId",
                 table: "Panels",
                 column: "UserId",
                 principalTable: "AspNetUsers",

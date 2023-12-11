@@ -4,6 +4,7 @@ using SmartAdSignage.API.Extensions;
 using SmartAdSignage.Core.Models;
 using SmartAdSignage.Repository.Data;
 using Serilog;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -14,7 +15,7 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddDefaultTokenProviders();
 builder.Services.AddAuthorization();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddSqlServer<ApplicationDbContext>(connectionString);
 
 builder.Services.RegisterRepositories();
 builder.Services.RegisterServices();
@@ -22,12 +23,15 @@ builder.Services.ConfigureSwagger();
 builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureMapping();
 builder.Services.ConfigureCors();
+builder.Services.ConfigureLocalization();
 
 builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+var localizeOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
+app.UseRequestLocalization(localizeOptions.Value);
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

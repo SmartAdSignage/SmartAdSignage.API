@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartAdSignage.Core.DTOs.Common;
 using SmartAdSignage.Core.DTOs.IoTDevice.Requests;
@@ -10,6 +11,7 @@ namespace SmartAdSignage.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class IoTDeviceController : ControllerBase
     {
         private readonly IMapper _mapper;

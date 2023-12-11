@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using SmartAdSignage.Core.DTOs.AdCampaign.Reponses;
@@ -14,6 +16,7 @@ namespace SmartAdSignage.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AdCampaignController : ControllerBase
     {
         private readonly IMapper _mapper;

@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Serilog;
 using SmartAdSignage.Core.DTOs.Exception;
 using SmartAdSignage.Core.Extra;
-using SmartAdSignage.Services.Services.Interfaces;
-using System;
 using System.Net;
 using System.Reflection;
 using System.Security.Authentication;
@@ -36,7 +33,7 @@ namespace SmartAdSignage.API.Extensions
                                 new ExceptionResponse()
                                 {
                                     StatusCode = (int) status,
-                                    Message = contextFeature.Error.InnerException == null ? contextFeature.Error.Message : contextFeature.Error.InnerException.Message /*"Internal Server Error."*/
+                                    Message = contextFeature.Error.InnerException == null ? contextFeature.Error.Message : contextFeature.Error.InnerException.Message
                                 }.ToString());
                         }
                     });

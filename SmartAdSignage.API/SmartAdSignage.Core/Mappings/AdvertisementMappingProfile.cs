@@ -17,7 +17,7 @@ namespace SmartAdSignage.Core.Mappings
             CreateMap<Advertisement, AdvertisementResponse>().ReverseMap();
             CreateMap<Advertisement, AdvertisementPropsResponse>().ReverseMap();
             CreateMap<AdvertisementRequest, Advertisement>()
-                .ForMember(dest => dest.File, opt => opt.MapFrom(src => File.ReadAllBytes(src.File))).ReverseMap();
+                .ForMember(dest => dest.File, opt => opt.MapFrom(src => File.ReadAllBytes(src.File)));
         }
     }
 }

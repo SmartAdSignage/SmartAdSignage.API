@@ -39,6 +39,7 @@ namespace SmartAdSignage.API.Controllers
             return Ok(users);
         }
 
+        [Authorize]
         [HttpGet("{userName}")]
         public async Task<IActionResult> GetUserByName([FromRoute] string userName)
         {
@@ -52,6 +53,7 @@ namespace SmartAdSignage.API.Controllers
             return Ok(user);
         }
 
+        [Authorize]
         [HttpDelete("{userName}")]
         public async Task<IActionResult> DeleteUser([FromRoute] string userName)
         {
@@ -69,6 +71,7 @@ namespace SmartAdSignage.API.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpPut("{username}")]
         public async Task<IActionResult> UpdateUser([FromRoute] string username, [FromBody] UpdateUserRequest updateUserRequest)
         {

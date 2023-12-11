@@ -19,14 +19,8 @@ namespace SmartAdSignage.Core.DTOs.AdCampaign.Reponses
         public int? TargetedViews { get; set; }
 
         public string? Status { get; set; }
-/*
-        public string? UserId { get; set; }*/
 
         public UserResponse? User { get; set; }
-/*
-        public ICollection<int>? PanelIds { get; set; }
-
-        public ICollection<int>? CampaignAdvertisementIds { get; set; }*/
 
         public ICollection<CampaignAdvertisementPropsResponse>? CampaignAdvertisements { get; set; }
 

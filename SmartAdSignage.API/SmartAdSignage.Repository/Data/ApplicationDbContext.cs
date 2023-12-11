@@ -36,7 +36,6 @@ namespace SmartAdSignage.Repository.Data
         protected override void OnConfiguring(DbContextOptionsBuilder dbContextOptionsBuilder)
         {
             dbContextOptionsBuilder.UseLazyLoadingProxies();
-            //base.ConfigureConventions(configurationBuilder);
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {

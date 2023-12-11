@@ -35,7 +35,7 @@ namespace SmartAdSignage.Repository.Migrations
                 {
                     table.PrimaryKey("PK_AdCampaigns", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AdCampaigns_AspNetUsers_UserId",
+                        name: "FK_AdCampaigns_AspNetUsersuserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
@@ -58,7 +58,7 @@ namespace SmartAdSignage.Repository.Migrations
                 {
                     table.PrimaryKey("PK_Advertisements", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Advertisements_AspNetUsers_UserId",
+                        name: "FK_Advertisements_AspNetUsersuserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
@@ -131,7 +131,7 @@ namespace SmartAdSignage.Repository.Migrations
                 {
                     table.PrimaryKey("PK_Panels", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Panels_AspNetUsers_UserId",
+                        name: "FK_Panels_AspNetUsersuserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
@@ -221,12 +221,12 @@ namespace SmartAdSignage.Repository.Migrations
                 column: "PanelsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AdCampaigns_UserId",
+                name: "IX_AdCampaignsuserId",
                 table: "AdCampaigns",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Advertisements_UserId",
+                name: "IX_AdvertisementsuserId",
                 table: "Advertisements",
                 column: "UserId");
 
@@ -251,7 +251,7 @@ namespace SmartAdSignage.Repository.Migrations
                 column: "LocationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Panels_UserId",
+                name: "IX_PanelsuserId",
                 table: "Panels",
                 column: "UserId");
 

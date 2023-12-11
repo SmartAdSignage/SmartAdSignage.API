@@ -57,13 +57,6 @@ namespace SmartAdSignage.API.Controllers
             var user = _mapper.Map<User>(registerRequest);
             string password = registerRequest.Password;
             var userResult = await _usersService.RegisterUserAsync(user, password);
-            /*if (!userResult.Succeeded) 
-            {
-                foreach (var error in userResult.Errors)
-                {
-                    ModelState.TryAddModelError(error.Code, error.Description);
-                }
-            }*/
             var createdUser = _mapper.Map<RegisteredUserResponse>(user);
             createdUser.Role = "User";
             return !userResult.Succeeded ? new BadRequestObjectResult(userResult) : Created("", createdUser);

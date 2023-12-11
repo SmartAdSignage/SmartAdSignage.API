@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using SmartAdSignage.Core.DTOs.Advertisement.Requests;
@@ -11,6 +12,7 @@ namespace SmartAdSignage.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AdvertisementController : ControllerBase
     {
         private readonly IMapper _mapper;

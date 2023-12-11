@@ -1,12 +1,8 @@
 ﻿using SmartAdSignage.Core.Extra;
 using SmartAdSignage.Core.Models;
+using SmartAdSignage.Core.Resources;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SmartAdSignage.Services.Services.Implementations
 {
@@ -20,9 +16,9 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<AdCampaign> CreateAdCampaignAsync(AdCampaign adCampaign)
         {
             if (adCampaign == null)
-                throw new ArgumentException("Invalid arguments");
-            if (!ValidateAdCampaignDates(adCampaign)) 
-                throw new ArgumentException("Invalid dates");
+                throw new ArgumentException(Resources.Get("Invalid arguments"));
+            if (!ValidateAdCampaignDates(adCampaign))
+                throw new ArgumentException(Resources.Get("Invalid dates"));
             var result = await _unitOfWork.AdCampaigns.AddAsync(adCampaign);
             await _unitOfWork.AdCampaigns.SaveAsync();
             return result;
@@ -53,7 +49,7 @@ namespace SmartAdSignage.Services.Services.Implementations
             if (existingAdCampaign == null)
                 return null;
             if (!ValidateAdCampaignDates(adCampaign))
-                throw new ArgumentException("Invalid dates");
+                throw new ArgumentException(Resources.Get("Invalid dates"));
             existingAdCampaign.Status = adCampaign.Status;
             existingAdCampaign.EndDate = adCampaign.EndDate;
             existingAdCampaign.TargetedViews = adCampaign.TargetedViews;

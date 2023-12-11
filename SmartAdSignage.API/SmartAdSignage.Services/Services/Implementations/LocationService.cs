@@ -1,5 +1,6 @@
 ﻿using SmartAdSignage.Core.Extra;
 using SmartAdSignage.Core.Models;
+using SmartAdSignage.Core.Resources;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
 using System;
@@ -21,7 +22,7 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<Location> CreateLocationAsync(Location location)
         {
             if (location == null)
-                throw new ArgumentException("Invalid arguments");
+                throw new ArgumentException(Resources.Get("Invalid arguments"));
             var result = await _unitOfWork.Locations.AddAsync(location);
             await _unitOfWork.Locations.SaveAsync();
             return result;
@@ -49,7 +50,7 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<Location> UpdateLocationAsync(int id, Location location)
         {
             if (location == null)
-                throw new ArgumentException("Invalid arguments");
+                throw new ArgumentException(Resources.Get("Invalid arguments"));
             var existingLocation = await _unitOfWork.Locations.GetByIdAsync(id);
             if (existingLocation == null)
                 return null;

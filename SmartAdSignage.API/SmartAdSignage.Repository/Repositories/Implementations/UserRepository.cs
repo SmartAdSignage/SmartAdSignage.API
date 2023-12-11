@@ -14,11 +14,11 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
     public class UserRepository : IUserRepository
     {
         public ApplicationDbContext Context { get; set; }
-        public UserManager<User> _userManager { get; set; }
+        public UserManager<User> userManager { get; set; }
         public UserRepository(ApplicationDbContext context, UserManager<User> userManager)
         {
             this.Context = context;
-            this._userManager = userManager;
+            this.userManager = userManager;
         }
 
         public async Task<IEnumerable<User>> GetAllAsync()
@@ -28,7 +28,7 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
 
         public async Task<User?> GetByUsernameAsync(string username)
         {
-            return await _userManager.FindByNameAsync(username);
+            return await userManager.FindByNameAsync(username);
         }
 
         public async Task<bool> SaveRefreshToken(string username, string refreshToken)
@@ -40,32 +40,32 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
 
         public async Task<IdentityResult> UpdateUser(User user)
         {
-            return await _userManager.UpdateAsync(user);
+            return await userManager.UpdateAsync(user);
         }
 
         public async Task<IdentityResult> CreateUserAsync(User user, string password)
         {
-            return await _userManager.CreateAsync(user, password);
+            return await userManager.CreateAsync(user, password);
         }
 
         public async Task<IdentityResult> AddRoleToUserAsync(User user, string role)
         {
-            return await _userManager.AddToRoleAsync(user, role);
+            return await userManager.AddToRoleAsync(user, role);
         }
 
         public async Task<IList<string>> GetRolesForUserAsync(User user)
         {
-            return await _userManager.GetRolesAsync(user);
+            return await userManager.GetRolesAsync(user);
         }
 
         public async Task<bool> CheckPasswordForUserAsync(User user, string password)
         {
-            return await _userManager.CheckPasswordAsync(user, password);
+            return await userManager.CheckPasswordAsync(user, password);
         }
 
         public async Task<IdentityResult> DeleteUserAsync(User user)
         {
-            return await _userManager.DeleteAsync(user);
+            return await userManager.DeleteAsync(user);
         }
     }
 }

@@ -1,13 +1,10 @@
 ﻿using SmartAdSignage.Core.Extra;
 using SmartAdSignage.Core.Models;
+using SmartAdSignage.Core.Resources;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Resources;
 
 namespace SmartAdSignage.Services.Services.Implementations
 {
@@ -22,7 +19,7 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<Panel> CreatePanelAsync(Panel panel)
         {
             if (panel == null)
-                throw new ArgumentException("Invalid arguments");
+                throw new ArgumentException(Resources.Get("Invalid arguments"));
             var result = await _unitOfWork.Panels.AddAsync(panel);
             await _unitOfWork.Panels.SaveAsync();
             return result;
@@ -59,7 +56,8 @@ namespace SmartAdSignage.Services.Services.Implementations
                 return null;
             var lightMeter = (panel.IoTDevices?.Where(x => x.Name == "Light Meter").FirstOrDefault()) ?? throw new LightMeterException("No light meter was found to perform operation");
             if (lightMeter.Status != "Active")
-                throw new LightMeterException("Light meter for this panel is not active");
+                throw new LightMeterException(Resources.Get("Not active"));
+                //throw new LightMeterException("Light meter for this panel is not active");
             double luxValue;
             using (var httpClient = new HttpClient())
             {
@@ -100,7 +98,7 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<Panel> UpdatePanelAsync(int id, Panel panel)
         {
             if (panel == null)
-                throw new ArgumentException("Invalid arguments");
+                throw new ArgumentException(Resources.Get("Invalid arguments"));
             var exsistingPanel = await _unitOfWork.Panels.GetByIdAsync(id);
             if (exsistingPanel == null)
                 return null;

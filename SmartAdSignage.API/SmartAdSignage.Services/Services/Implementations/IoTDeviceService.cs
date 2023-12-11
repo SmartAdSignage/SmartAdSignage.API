@@ -1,5 +1,6 @@
 ﻿using SmartAdSignage.Core.Extra;
 using SmartAdSignage.Core.Models;
+using SmartAdSignage.Core.Resources;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Interfaces;
 using System;
@@ -21,7 +22,7 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<IoTDevice> CreateIoTDeviceAsync(IoTDevice ioTDevice)
         {
             if (ioTDevice == null)
-                throw new ArgumentException("Invalid arguments");
+                throw new ArgumentException(Resources.Get("Invalid arguments"));
             var result = await _unitOfWork.IoTDevices.AddAsync(ioTDevice);
             await _unitOfWork.IoTDevices.SaveAsync();
             return result;
@@ -54,7 +55,7 @@ namespace SmartAdSignage.Services.Services.Implementations
         public async Task<IoTDevice> UpdateIoTDeviceAsync(int id, IoTDevice ioTDevice)
         {
             if (ioTDevice == null)
-                throw new ArgumentException("Invalid arguments");
+                throw new ArgumentException(Resources.Get("Invalid arguments"));
             var existingIoTDevice = await _unitOfWork.IoTDevices.GetByIdAsync(id);
             if (existingIoTDevice == null)
                 return null;

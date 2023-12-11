@@ -17,8 +17,6 @@ namespace SmartAdSignage.Core.Mappings
             CreateMap<Queue, QueueResponse>().ReverseMap();
             CreateMap<QueueRequest, Queue>().ReverseMap();
             CreateMap<Queue, QueuePropsResponse>().ReverseMap();
-            /*CreateMap<CreateAdvertisementRequest, Advertisement>();
-            CreateMap<UpdateAdvertisementRequest, Advertisement>();*/
         }
     }
 }

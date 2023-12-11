@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -9,6 +10,7 @@ using SmartAdSignage.Repository.Repositories.Implementations;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using SmartAdSignage.Services.Services.Implementations;
 using SmartAdSignage.Services.Services.Interfaces;
+using System.Globalization;
 using System.Text;
 
 namespace SmartAdSignage.API.Extensions
@@ -128,6 +130,38 @@ namespace SmartAdSignage.API.Extensions
                 map.AddProfile<QueueMappingProfile>();
             });
             services.AddSingleton(mapperConfig.CreateMapper());
+        }
+
+        public static void ConfigureLocalization(this IServiceCollection services)
+        {
+            services.AddLocalization(x => x.ResourcesPath = "Resources");
+            services.Configure<RequestLocalizationOptions>(
+                options =>
+                {
+                    var supportedCultures = new List<CultureInfo>
+                    {
+                        new CultureInfo("en-US")
+                        {
+                            DateTimeFormat =
+                            {
+                                LongTimePattern = "MM/DD/YYYY",
+                                ShortTimePattern = "MM/DD/YYYY"
+                            }
+                        },
+                        new CultureInfo("uk-UA")
+                        {
+                            DateTimeFormat =
+                            {
+                                LongTimePattern = "DD/MM/YYYY",
+                                ShortTimePattern = "DD/MM/YYYY"
+                            }
+                        }
+                    };
+
+                    options.DefaultRequestCulture = new RequestCulture(culture: "en-US", uiCulture: "en-US");
+                    options.SupportedCultures = supportedCultures;
+                    options.SupportedUICultures = supportedCultures;
+                });
         }
     }
 }

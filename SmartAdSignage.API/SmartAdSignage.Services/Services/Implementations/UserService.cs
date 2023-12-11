@@ -15,7 +15,7 @@ namespace SmartAdSignage.Services.Services.Implementations
     {
         private readonly IUserRepository _usersRepository;
         private readonly IConfiguration _configuration;
-        private User? _user;
+        private User? user;
 
         public UserService(IUserRepository usersRepository, IConfiguration configuration)
         {
@@ -38,8 +38,8 @@ namespace SmartAdSignage.Services.Services.Implementations
 
         public async Task<bool> ValidateUserAsync(string username, string password)
         {
-            _user = await _usersRepository.GetByUsernameAsync(username);
-            var result = _user != null && await _usersRepository.CheckPasswordForUserAsync(_user, password);
+            user = await _usersRepository.GetByUsernameAsync(username);
+            var result = user != null && await _usersRepository.CheckPasswordForUserAsync(user, password);
             return result;
         }
 
@@ -47,9 +47,9 @@ namespace SmartAdSignage.Services.Services.Implementations
         {
             var token = await GenerateAccessTokenAsync();
             var refreshToken = GenerateRefreshTokenAsync();
-            _user.RefreshToken = refreshToken;
-            _user.RefreshTokenExpiryTime = DateTime.Now.AddDays(Convert.ToDouble(GetConfiguration("refreshTokenExpiresInDays")));
-            await _usersRepository.UpdateUser(_user);
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(Convert.ToDouble(GetConfiguration("refreshTokenExpiresInDays")));
+            await _usersRepository.UpdateUser(user);
             return new string[] { token, refreshToken };
         }
 
@@ -65,25 +65,25 @@ namespace SmartAdSignage.Services.Services.Implementations
         {
             var principal = GetPrincipalFromExpiredToken(accessToken);
             var username = principal.Identity.Name;
-            _user = await _usersRepository.GetByUsernameAsync(username);
-            if (_user is null || _user.RefreshToken != refreshToken || _user.RefreshTokenExpiryTime <= DateTime.Now)
+            user = await _usersRepository.GetByUsernameAsync(username);
+            if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
                 return null;
             var newToken = await GenerateAccessTokenAsync();
             var newRefreshToken = GenerateRefreshTokenAsync();
-            _user.RefreshToken = newRefreshToken;
-            await _usersRepository.UpdateUser(_user);
+            user.RefreshToken = newRefreshToken;
+            await _usersRepository.UpdateUser(user);
             return new string[] { newToken, newRefreshToken };
         }
 
         public async Task<IdentityResult> RevokeToken(string username)
         {
-            _user = await _usersRepository.GetByUsernameAsync(username);
-            if (_user == null)
+            user = await _usersRepository.GetByUsernameAsync(username);
+            if (user == null)
                 return null;
 
-            _user.RefreshToken = null;
-            _user.RefreshTokenExpiryTime = DateTime.MinValue;
-            var res = await _usersRepository.UpdateUser(_user);
+            user.RefreshToken = null;
+            user.RefreshTokenExpiryTime = DateTime.MinValue;
+            var res = await _usersRepository.UpdateUser(user);
             return res;
         }
 
@@ -117,9 +117,9 @@ namespace SmartAdSignage.Services.Services.Implementations
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, _user.UserName)
+                new Claim(ClaimTypes.Name, user.UserName)
             };
-            var roles = await _usersRepository.GetRolesForUserAsync(_user);
+            var roles = await _usersRepository.GetRolesForUserAsync(user);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
