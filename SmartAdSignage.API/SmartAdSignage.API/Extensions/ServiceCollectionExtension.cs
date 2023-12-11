@@ -70,6 +70,7 @@ namespace SmartAdSignage.API.Extensions
             services.AddScoped<IAdCampaignService, AdCampaignService>();
             services.AddScoped<ICampaignAdService, CampaignAdService>();
             services.AddScoped<IQueueService, QueueService>();
+            services.AddScoped<IDatabaseService, DatabaseService>();
         }
 
         public static void RegisterRepositories(this IServiceCollection services)

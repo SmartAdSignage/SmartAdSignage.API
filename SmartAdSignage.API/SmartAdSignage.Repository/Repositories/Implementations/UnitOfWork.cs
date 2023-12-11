@@ -1,4 +1,5 @@
-﻿using SmartAdSignage.Core.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using SmartAdSignage.Core.Models;
 using SmartAdSignage.Repository.Data;
 using SmartAdSignage.Repository.Repositories.Interfaces;
 using System;
@@ -11,6 +12,7 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
 {
     public class UnitOfWork : IUnitOfWork
     {
+        private readonly ApplicationDbContext _context;
         private readonly IGenericRepository<Advertisement> _advertisementRepository;
         private readonly IGenericRepository<AdCampaign> _adCampaignRepository;
         private readonly IGenericRepository<Panel> _panelRepository;
@@ -19,7 +21,8 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
         private readonly IGenericRepository<CampaignAdvertisement> _campaignadvertisementRepository;
         private readonly IGenericRepository<Queue> _queueRepository;
 
-        public UnitOfWork(IGenericRepository<Advertisement> advertisementRepository,
+        public UnitOfWork(ApplicationDbContext context, 
+            IGenericRepository<Advertisement> advertisementRepository,
             IGenericRepository<AdCampaign> adCampaignRepository,
             IGenericRepository<Panel> panelRepository,
             IGenericRepository<Location> locationRepository,
@@ -27,6 +30,7 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
             IGenericRepository<CampaignAdvertisement> campaignadvertisementRepository,
             IGenericRepository<Queue> queueRepository)
         {
+            _context = context;
             _advertisementRepository = advertisementRepository;
             _adCampaignRepository = adCampaignRepository;
             _panelRepository = panelRepository;
@@ -49,5 +53,10 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
         public IGenericRepository<CampaignAdvertisement> CampaignAdvertisements => _campaignadvertisementRepository;
 
         public IGenericRepository<Queue> Queues => _queueRepository;
+
+        public async Task CreateDatabaseBackupAsync(string path) 
+        {
+            await _context.Database.ExecuteSqlRawAsync($"BACKUP DATABASE SmartAdSignage TO DISK = '{path}'");
+        }
     }
 }

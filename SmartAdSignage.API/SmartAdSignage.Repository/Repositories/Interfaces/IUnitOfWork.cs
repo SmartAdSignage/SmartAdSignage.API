@@ -23,5 +23,7 @@ namespace SmartAdSignage.Repository.Repositories.Interfaces
         IGenericRepository<CampaignAdvertisement> CampaignAdvertisements { get; }
 
         IGenericRepository<Queue> Queues { get; }
+
+        Task CreateDatabaseBackupAsync(string path);
     }
 }
