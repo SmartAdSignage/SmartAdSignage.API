@@ -129,4 +129,10 @@
   <data name="Not active" xml:space="preserve">
     <value>Light meter for this panel is not active</value>
   </data>
+  <data name="Ad campaign not found" xml:space="preserve">
+    <value>Ad campaign not found with id: </value>
+  </data>
+  <data name="Ad" xml:space="preserve">
+    <value></value>
+  </data>
 </root>

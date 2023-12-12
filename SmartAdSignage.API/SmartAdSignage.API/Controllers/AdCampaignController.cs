@@ -1,15 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 using SmartAdSignage.Core.DTOs.AdCampaign.Reponses;
 using SmartAdSignage.Core.DTOs.AdCampaign.Requests;
-using SmartAdSignage.Core.DTOs.Advertisement.Responses;
 using SmartAdSignage.Core.DTOs.Common;
 using SmartAdSignage.Core.Models;
-using SmartAdSignage.Services.Services.Implementations;
+using SmartAdSignage.Core.Resources;
 using SmartAdSignage.Services.Services.Interfaces;
 
 namespace SmartAdSignage.API.Controllers
@@ -67,7 +63,7 @@ namespace SmartAdSignage.API.Controllers
             if (result == null)
             {
                 _logger.Error($"Ad campaign with id: {id} not found");
-                return NotFound($"Ad campaign with id: {id} not found");
+                return NotFound(Resources.Get("Ad campaign not found") + id);
             }
             var adCampaign = _mapper.Map<AdCampaignResponse>(result);
             return Ok(adCampaign);

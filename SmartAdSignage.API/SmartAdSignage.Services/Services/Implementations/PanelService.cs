@@ -54,10 +54,9 @@ namespace SmartAdSignage.Services.Services.Implementations
             var panel = await _unitOfWork.Panels.GetByIdAsync(id);
             if (panel == null)
                 return null;
-            var lightMeter = (panel.IoTDevices?.Where(x => x.Name == "Light Meter").FirstOrDefault()) ?? throw new LightMeterException("No light meter was found to perform operation");
+            var lightMeter = (panel.IoTDevices?.Where(x => x.Name == "Light Meter").FirstOrDefault()) ?? throw new LightMeterException(Resources.Get("No light meter"));
             if (lightMeter.Status != "Active")
                 throw new LightMeterException(Resources.Get("Not active"));
-                //throw new LightMeterException("Light meter for this panel is not active");
             double luxValue;
             using (var httpClient = new HttpClient())
             {

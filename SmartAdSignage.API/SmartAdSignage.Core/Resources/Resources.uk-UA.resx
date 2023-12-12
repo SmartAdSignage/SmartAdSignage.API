@@ -129,4 +129,7 @@
   <data name="Not active" xml:space="preserve">
     <value>Вимірювач освітлення не активний</value>
   </data>
+  <data name="Ad campaign not found" xml:space="preserve">
+    <value>Рекламна кампанія не знайдена для id: </value>
+  </data>
 </root>
