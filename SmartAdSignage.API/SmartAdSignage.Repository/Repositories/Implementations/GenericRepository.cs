@@ -57,6 +57,10 @@ namespace SmartAdSignage.Repository.Repositories.Implementations
         PageInfo pageInfo,
         Expression<Func<TEntity, TEntity>> selector)
         {
+            if (pageInfo == null)
+            {
+                return (await GetAllAsync()).ToList();
+            }
             var skip = pageInfo.Size * (pageInfo.Number - 1);
 
             IQueryable<TEntity> query = _dbSet.AsQueryable();

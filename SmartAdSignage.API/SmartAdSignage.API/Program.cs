@@ -22,7 +22,7 @@ builder.Services.RegisterServices();
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureMapping();
-builder.Services.ConfigureCors();
+//builder.Services.ConfigureCors();
 builder.Services.ConfigureLocalization();
 
 builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
@@ -43,7 +43,13 @@ app.UseRouting();
 app.UseHttpsRedirection();
 
 app.UseSerilogRequestLogging();
-app.UseCors("EnableCORS");
+app.UseCors(policyBuilder =>
+{
+    policyBuilder.AllowAnyOrigin();
+    policyBuilder.AllowAnyMethod();
+    policyBuilder.AllowAnyHeader();
+});
+//app.UseCors("EnableCORS");
 app.ConfigureExceptionHandler();
 
 app.UseAuthentication();
