@@ -26,6 +26,8 @@ namespace SmartAdSignage.Services.Services.Interfaces
 
         Task<IEnumerable<User?>> GetUsersAsync();
 
+        Task<string> GetRole(User user);
+
         Task<User> GetUserByNameAsync(string userName);
 
         Task<IdentityResult> DeleteUserByNameAsync(string userName);

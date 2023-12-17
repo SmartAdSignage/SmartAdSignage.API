@@ -35,7 +35,13 @@ namespace SmartAdSignage.API.Controllers
                 _logger.Error("No users found");
                 return NotFound("No users found");
             }
-            var users = _mapper.Map<IEnumerable<UserResponse>>(result);
+            List<UserResponse> users = new ();
+            foreach (var user in result)
+            {
+                var currentUser = _mapper.Map<UserResponse>(user);
+                currentUser.Role = await _usersService.GetRole(user);
+                users.Add(currentUser);
+            }
             return Ok(users);
         }
 

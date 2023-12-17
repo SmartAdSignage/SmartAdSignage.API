@@ -106,6 +106,12 @@ namespace SmartAdSignage.Services.Services.Implementations
             return result;
         }
 
+        public async Task<string> GetRole(User user) 
+        {
+            var role = await _usersRepository.GetRolesForUserAsync(user);
+            return role.FirstOrDefault();
+        }
+
         private SigningCredentials GetSigningCredentials()
         {
             var key = Encoding.UTF8.GetBytes(GetConfiguration("secret"));

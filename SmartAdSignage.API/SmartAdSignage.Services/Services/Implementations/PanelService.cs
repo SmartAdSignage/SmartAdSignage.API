@@ -103,6 +103,7 @@ namespace SmartAdSignage.Services.Services.Implementations
                 return null;
             exsistingPanel.Width = panel.Width;
             exsistingPanel.Height = panel.Height;
+            exsistingPanel.Brightness = panel.Brightness;
             exsistingPanel.Longitude = panel.Longitude;
             exsistingPanel.Latitude = panel.Latitude;
             exsistingPanel.Status = panel.Status;

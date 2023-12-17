@@ -30,4 +30,8 @@
     <ProjectReference Include="..\SmartAdSignage.Services\SmartAdSignage.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Images\" />
+  </ItemGroup>
+
 </Project>
