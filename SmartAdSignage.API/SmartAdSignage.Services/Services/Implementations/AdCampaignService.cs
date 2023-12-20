@@ -71,8 +71,8 @@ namespace SmartAdSignage.Services.Services.Implementations
                 if (adCampaign.Status != "Finished") 
                 {
                     adCampaign.Status = "Finished";
-                    _unitOfWork.AdCampaigns.Update(adCampaign);
-                    await _unitOfWork.AdCampaigns.SaveAsync();
+                    //_unitOfWork.AdCampaigns.Update(adCampaign);
+                    //await _unitOfWork.AdCampaigns.SaveAsync();
                 }
             }
             return adCampaigns;
@@ -82,9 +82,7 @@ namespace SmartAdSignage.Services.Services.Implementations
         {
             var views = adCampaign.CampaignAdvertisements.Sum(x => x.Views);
             var overallDisplays = adCampaign.CampaignAdvertisements.Sum(x => x.DisplayedTimes); 
-            var advertsDisplayed = adCampaign.CampaignAdvertisements.Count(); 
-            if (adCampaign.Status != "Finished")
-                adCampaign.Status = "Finished";
+            var advertsDisplayed = adCampaign.CampaignAdvertisements.Count();
             return new int[] { views, overallDisplays, advertsDisplayed };
         }
 
